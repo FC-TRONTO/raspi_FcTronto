@@ -8,7 +8,7 @@ from motorContl import MotorController
 
 # 共有メモリの構造体
 class Point(Structure):
-    _fields_ = [('irAngle', c_int), ('uSonicDis', c_double)]
+    _fields_ = [('irAngle', c_int), ('uSonicDis', c_double), ('enemyGoalAngle', c_int), ('enemyGoalDis', c_int), ('myGoalAngle', c_int), ('myGoalDis', c_int)]
 
 def info(title):
     print(title)
