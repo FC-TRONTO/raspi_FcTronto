@@ -4,11 +4,12 @@ import cv2
 import numpy as np
 import picamera
 import picamera.array
+from debug import ERROR, WARN, INFO, DEBUG, TRACE
 
 
 class ImageProcessing:
     def __init__(self):
-        print 'ImageProcessing generated'
+        TRACE('ImageProcessing generated')
 
     def colorDetect(self, hsv_img, hsv_range_min, hsv_range_max, color_name):
         mask = cv2.inRange(hsv_img, np.array(hsv_range_min), np.array(hsv_range_max))
@@ -72,7 +73,7 @@ class ImageProcessing:
                     if cx > -1:
                         self.draw_marker(stream.array, cx, cy, (30, 255, 30))
 
-                    print 'Blue :' + str(area_size_blue).rjust(8) + ' Yellow :' + str(area_size_yellow).rjust(8)
+                    DEBUG('Blue :' + str(area_size_blue).rjust(8) + ' Yellow :' + str(area_size_yellow).rjust(8))
 
                     # 結果表示
                     cv2.imshow('Frame', stream.array)
@@ -95,7 +96,7 @@ class ImageProcessing:
             # TODO: 共有メモリに書き込む
 
     def target(self, shmem):
-        print 'imageProcessingMain target() start'
+        TRACE('imageProcessingMain target() start')
         self.imageProcessingMain(shmem)
 
     def close():

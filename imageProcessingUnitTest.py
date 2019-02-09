@@ -3,7 +3,7 @@
 import unittest
 from imageProcessing import ImageProcessing
 from ctypes import Structure, c_int, c_double
-
+from debug import ERROR, WARN, INFO, DEBUG, TRACE
 
 # テスト用共有メモリの構造体
 class TestPoint(Structure):
@@ -13,7 +13,7 @@ class TestPoint(Structure):
 if __name__ == '__main__':
     from multiprocessing import Process, Value
 
-    print 'test main line'
+    TRACE('test main line')
     # テスト用共有メモリの準備
     shmem = Value(TestPoint, 0)
 
@@ -23,5 +23,5 @@ if __name__ == '__main__':
     p_imageProcessing = Process(target=imageProcessing.target, args=(shmem,))
 
     p_imageProcessing.start()
-    print 'p_imageProcessing started'
+    TRACE('p_imageProcessing started')
     p_imageProcessing.join()
