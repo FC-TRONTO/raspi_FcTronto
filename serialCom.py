@@ -2,6 +2,7 @@
 
 import serial
 import time
+from debug import ERROR, WARN, INFO, DEBUG, TRACE
 
 class SerialController:
     def __init__(self):
@@ -9,8 +10,8 @@ class SerialController:
         # 送信用と受信用で2つポートを使う
         self.ev3_recv_serial = serial.Serial('/dev/ttyUSB0', 115200, timeout=10)
         self.ev3_send_serial = serial.Serial('/dev/ttyUSB1', 115200, timeout=10)
-        print(self.ev3_recv_serial.portstr)
-        print(self.ev3_send_serial.portstr)
+        INFO(self.ev3_recv_serial.portstr)
+        INFO(self.ev3_send_serial.portstr)
     
     def receiveDataLoop(self, shmem):
         while 1:
@@ -23,14 +24,14 @@ class SerialController:
                     shmem.irAngle = int(sensorValues[0])
                 if(self.is_float(sensorValues[1])):
                     shmem.uSonicDis = float(sensorValues[1])
-                #print('irAngle =', shmem.irAngle)
-                #print('uSonicDis =', shmem.uSonicDis)
+                TRACE('irAngle =', shmem.irAngle)
+                TRACE('uSonicDis =', shmem.uSonicDis)
             # 100msごとに実行
             time.sleep(0.1)
     
     def write(self, sendData):
         self.ev3_send_serial.write(sendData)
-        print('write', sendData)
+        TRACE('write', sendData)
 
     def target(self, shmem):
         self.receiveDataLoop(shmem)

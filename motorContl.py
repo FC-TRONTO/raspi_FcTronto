@@ -3,6 +3,7 @@
 from serialCom import SerialController
 import time
 from enum import Enum
+from debug import ERROR, WARN, INFO, DEBUG, TRACE
 
 # ボール保持状態用列挙型
 class BallStateE(Enum):
@@ -22,7 +23,7 @@ class MotorController:
 
     # コンストラクタ
     def __init__(self):
-        print('MotorController generated')
+        DEBUG('MotorController generated')
         # インスタンス変数初期化
         # ドリブル状態に入ったかを記憶する変数
         self.is_dribble_started = False
@@ -38,7 +39,7 @@ class MotorController:
             else:
                 # 距離センサの値が閾値より大きくなっていたらドリブル状態は解除
                 self.is_dribble_started = False
-                print 'dribble END'
+                DEBUG('dribble END')
                 return BallStateE.NOT_HAVE_BALL
         # ドリブル状態に入っていない場合
         else:
@@ -46,7 +47,7 @@ class MotorController:
             # ドリブル状態に入る
             if distance < MotorController.THRESHOLD_BALL_DETECT:
                 self.is_dribble_started = True
-                print 'dribble START'
+                DEBUG('dribble START')
                 return BallStateE.HAVE_BALL
             else:
                 return BallStateE.NOT_HAVE_BALL
@@ -101,7 +102,7 @@ class MotorController:
     
     # 起動処理
     def target(self, shmem, serial):
-        print('MotorController target() start')
+        DEBUG('MotorController target() start')
         self.calcAndSendMotorPowers(shmem, serial)
 
     # 停止処理(仮)
