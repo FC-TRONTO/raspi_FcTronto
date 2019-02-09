@@ -1,48 +1,83 @@
 # -*- coding: utf8 -*-
 
-import logging
-from logging import getLogger, StreamHandler, Formatter
+# How to use
+#
+# 1. debug printを使用したいファイルで以下のようにimportする。
+# from debug import ERROR, WARN, INFO, DEBUG, TRACE
+#
+# 2. DEBUG_LEVELに、ログ出力のレベルを指定する。
+#    指定したレベル以上のログが出力される。
+#    例：DEBUG_LEVEL_INFO を指定すると、ERROR,WARN,INFOが出力される。
+#
+#
+# 3. 使用したいlevelのdebug printを通常のprint文のように記述する。
+#    複数引数にも対応している。
+#
+# debug levelの目安
+#
+# ERROR : プレー続行不可能になるようなエラー
+# WARN  : プレー続行不可能とはならないような警告
+# INFO  : 他スレッドとの結合動作において表示したい情報
+# DEBUG : 自スレッドのみの単体デバッグにおいて表示したい情報
+# TRACE : 処理の開始終了や分岐の出入りなど、ルートを確認するための情報
 
-DEBUG_LEVEL_NONE = 0
-DEBUG_LEVEL_INFO = 1
-DEBUG_LEVEL_DEBUG = 2
-DEBUG_LEVEL_TRACE = 3
-DEBUG_LEVEL_ALL = 4
+import datetime
 
-# ログ出力のレベルを指定する。
-# 指定したレベル以上のログが出力される。
-# 例：DEBUG_LEVEL_DEBUG を指定すると、INFOとDEBUGが出力される。
+DEBUG_LEVEL_OFF = -1
+DEBUG_LEVEL_ERROR = 0
+DEBUG_LEVEL_WARN = 1
+DEBUG_LEVEL_INFO = 2
+DEBUG_LEVEL_DEBUG = 3
+DEBUG_LEVEL_TRACE = 4
+DEBUG_LEVEL_ALL = 5
+
+DEBUG_DISABLE = 0
+DEBUG_ENABLE = 1
+
+# ログ出力のレベルを指定
 DEBUG_LEVEL = DEBUG_LEVEL_ALL
 
-# ログ出力の初期設定
-# todo: 関数化する
-logger = getLogger('LogTest')
-logger.setLevel(logging.DEBUG)
-stream_handler = StreamHandler()
-stream_handler.setLevel(logging.DEBUG)
-handler_format = Formatter('[%(asctime)s][%(processName)s][%(levelname)s] %(message)s')
-stream_handler.setFormatter(handler_format)
-logger.addHandler(stream_handler)
+
+def dummyFunc(level, *args):
+    pass
 
 
-def INFO(sentence):
-    if DEBUG_LEVEL >= DEBUG_LEVEL_INFO:
-        logger.info(sentence)
+def debugPrint(level, *args):
+    now = datetime.datetime.now()
+    timestamp = ''.join(['[', now.strftime('%H:%M:%S.%f')[:-3], ']'])
+    print timestamp + level +' ' + ' '.join(map(str, args))
 
 
-def DEBUG(sentence):
-    if DEBUG_LEVEL >= DEBUG_LEVEL_DEBUG:
-        logger.debug(sentence)
+debugFuncList = [dummyFunc, dummyFunc, dummyFunc, dummyFunc, dummyFunc]
+
+for i in range(DEBUG_LEVEL_ALL):
+    if DEBUG_LEVEL >= i:
+        debugFuncList[i] = debugPrint
 
 
-def TRACE(sentence):
-    if DEBUG_LEVEL >= DEBUG_LEVEL_TRACE:
-        logger.debug(sentence)
+def ERROR(*args):
+    debugFuncList[DEBUG_LEVEL_ERROR]('[ERROR]', *args)
 
 
-# main関数
-# todo:ファイル分割する
-if __name__ == "__main__":
+def WARN(*args):
+    debugFuncList[DEBUG_LEVEL_WARN]('[WARN ]', *args)
+
+
+def INFO(*args):
+    debugFuncList[DEBUG_LEVEL_INFO]('[INFO ]', *args)
+
+
+def DEBUG(*args):
+    debugFuncList[DEBUG_LEVEL_DEBUG]('[DEBUG]', *args)
+
+
+def TRACE(*args):
+    debugFuncList[DEBUG_LEVEL_TRACE]('[TRACE]', *args)
+
+
+if __name__ == '__main__':
+    ERROR('error test')
+    WARN('warn test')
     INFO('info test')
     DEBUG('debug test')
     TRACE('trace test')
