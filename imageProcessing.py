@@ -1,6 +1,6 @@
 # coding: UTF-8
 
-from enum import Enum
+from enum import IntEnum
 from debug import ERROR, WARN, INFO, DEBUG, TRACE
 
 import cv2
@@ -12,7 +12,7 @@ from math import atan2, degrees, hypot
 
 
 # ボール保持状態用列挙型
-class EnemyGoalColorE(Enum):
+class EnemyGoalColorE(IntEnum):
     YELLOW = 0
     BLUE = 1
 
