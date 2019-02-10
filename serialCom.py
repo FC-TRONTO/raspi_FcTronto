@@ -26,12 +26,10 @@ class SerialController:
                     shmem.uSonicDis = float(sensorValues[1])
                 TRACE('irAngle =', shmem.irAngle)
                 TRACE('uSonicDis =', shmem.uSonicDis)
-            # 100msごとに実行
-            time.sleep(0.1)
     
     def write(self, sendData):
         self.ev3_send_serial.write(sendData)
-        TRACE('write', sendData)
+        TRACE('write', sendData.rstrip())
 
     def target(self, shmem):
         self.receiveDataLoop(shmem)
