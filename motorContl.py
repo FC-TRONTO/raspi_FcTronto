@@ -86,10 +86,10 @@ class MotorController:
         # ゴールが正面にない場合
         elif eGoalAngle > -180 and eGoalAngle < 180:
             TRACE('calcMotor patern : -180 < enemyGoalAngle < 180')
-            # 絶対値が100を超える場合は100に丸める
-            eGoalAngle = self.roundOffWithin100(eGoalAngle)
             # モータの値は補正をかける
             speed = eGoalAngle / MotorController.CORRECTION_VALUE_EGOAL_ANGLE_TO_SPEED
+            # 絶対値が100を超える場合は100に丸める
+            speed = self.roundOffWithin100(speed)
             return (-speed), speed
         # ゴールとの角度が不正値の場合
         else:
@@ -98,9 +98,10 @@ class MotorController:
             if mGoalAngle > -180 and mGoalAngle < 180:
                 TRACE('calcMotor patern : -180 < mGoalAngle < 180')
                 # とりあえず自軍のゴールの方向に旋回するのは危険そうなので逆に旋回する
-                mGoalAngle = self.roundOffWithin100(mGoalAngle)
                 # モータの値は補正をかける
                 speed = mGoalAngle / MotorController.CORRECTION_VALUE_MGOAL_ANGLE_TO_SPEED
+                # 絶対値が100を超える場合は100に丸める
+                speed = self.roundOffWithin100(speed)
                 return (-speed), speed
             # 自分のゴールとの角度も不正値の場合
             else:
@@ -118,10 +119,10 @@ class MotorController:
         # ボールが正面にない場合
         else:
             TRACE('calcMotor patern : boalAngle != 0')
-            # 絶対値が100を超える場合は100に丸める
-            ballAngle = self.roundOffWithin100(ballAngle)
             # モータの値は補正をかける
             speed = ballAngle / MotorController.CORRECTION_VALUE_BALL_ANGLE_TO_SPEED
+            # 絶対値が100を超える場合は100に丸める
+            speed = self.roundOffWithin100(speed)
             return (-speed), speed
     
     # モータの値を計算する
