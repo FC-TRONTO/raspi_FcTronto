@@ -3,6 +3,7 @@
 from serialCom import SerialController
 import time
 from enum import Enum
+from debug import ERROR, WARN, INFO, DEBUG, TRACE
 
 # ボール保持状態用列挙型
 class BallStateE(Enum):
@@ -14,13 +15,15 @@ class MotorController:
     # ボール保持状態判定閾値
     THRESHOLD_BALL_DETECT = 0.05
     # ボールとの角度からモータ速度変換時の補正値
-    CORRECTION_VALUE_ANGLE_TO_SPEED = 5
+    CORRECTION_VALUE_ANGLE_TO_SPEED = 3
     # ボールとの距離からモータ速度変換時の補正値
     CORRECTION_VALUE_DISTANCE_TO_SPEED = 100
+    # 距離センサの値がinfinityの時のモータの値
+    SPEED_DISTANCE_INFINITE = 30
 
     # コンストラクタ
     def __init__(self):
-        print('MotorController generated')
+        DEBUG('MotorController generated')
         # インスタンス変数初期化
         # ドリブル状態に入ったかを記憶する変数
         self.is_dribble_started = False
@@ -36,6 +39,7 @@ class MotorController:
             else:
                 # 距離センサの値が閾値より大きくなっていたらドリブル状態は解除
                 self.is_dribble_started = False
+                DEBUG('dribble END')
                 return BallStateE.NOT_HAVE_BALL
         # ドリブル状態に入っていない場合
         else:
@@ -43,10 +47,20 @@ class MotorController:
             # ドリブル状態に入る
             if distance < MotorController.THRESHOLD_BALL_DETECT:
                 self.is_dribble_started = True
+                DEBUG('dribble START')
                 return BallStateE.HAVE_BALL
             else:
                 return BallStateE.NOT_HAVE_BALL
 
+    # ボールとの距離からモータの値を計算する
+    def getMotorPowerByDistance(self, distance):
+        # 距離センサの値がinfinityの場合は固定値
+        if distance == 100:
+            motorPower = MotorController.SPEED_DISTANCE_INFINITE
+        else:
+            motorPower = int(distance * MotorController.CORRECTION_VALUE_DISTANCE_TO_SPEED)
+        return motorPower, motorPower
+ 
     # モータの値を計算する
     def calcMotorPowers(self, ballState, angle, distance):
         # ボール保持状態の場合
@@ -59,7 +73,7 @@ class MotorController:
             # ボールが正面にある場合
             if angle == 0:
                 # 距離センサの値をボールまでの距離としてモータの値を計算
-                return getMotorPowerByDistance(distance)
+                return self.getMotorPowerByDistance(distance)
             # ボールが正面にない場合
             else:
                 # 絶対値が100を超える場合は100に丸める
@@ -84,16 +98,11 @@ class MotorController:
             # 本当は全力でぶん回したい
             # ラズパイ側はマルチプロセスを採用しているので問題ないと思うが
             # EV3側は計算資源を通信に占有される恐れがあるためとりあえず0.1sにしておく
-            time.sleep(0.1)
-    
-    # ボールとの距離からモータの値を計算する
-    def getMotorPowerByDistance(distance):
-        motorPower = distance * CORRECTION_VALUE_DISTANCE_TO_SPEED
-        return motorPower, motorPower
+            time.sleep(0.05)
     
     # 起動処理
     def target(self, shmem, serial):
-        print('MotorController target() start')
+        DEBUG('MotorController target() start')
         self.calcAndSendMotorPowers(shmem, serial)
 
     # 停止処理(仮)

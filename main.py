@@ -6,16 +6,17 @@ import os
 from serialCom import SerialController
 from motorContl import MotorController
 from imageProcessing import ImageProcessing
+from debug import ERROR, WARN, INFO, DEBUG, TRACE
 
 # 共有メモリの構造体
 class Point(Structure):
     _fields_ = [('irAngle', c_int), ('uSonicDis', c_double), ('enemyGoalAngle', c_int), ('enemyGoalDis', c_int), ('myGoalAngle', c_int), ('myGoalDis', c_int)]
 
 def info(title):
-    print(title)
-    print('module name:', __name__)
-    print('parent process:', os.getppid())
-    print('process id:', os.getpid())
+    INFO(title)
+    INFO('module name:', __name__)
+    INFO('parent process:', os.getppid())
+    INFO('process id:', os.getpid())
 
 if __name__ == '__main__':
     info('main line')
@@ -33,11 +34,11 @@ if __name__ == '__main__':
     p_imageProcessing = Process(target=imageProcessing.target, args=(shmem,))
 
     p_serialCon.start()
-    print('p_serialCon started')
+    DEBUG('p_serialCon started')
     p_motorContl.start()
-    print('p_motorContl started')
+    DEBUG('p_motorContl started')
     p_imageProcessing.start()
-    TRACE('p_imageProcessing started')
+    DEBUG('p_imageProcessing started')
 
     p_motorContl.join()
     p_serialCon.join()
