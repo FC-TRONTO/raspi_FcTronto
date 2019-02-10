@@ -15,11 +15,19 @@ class MotorController:
     # ボール保持状態判定閾値
     THRESHOLD_BALL_DETECT = 0.05
     # ボールとの角度からモータ速度変換時の補正値
-    CORRECTION_VALUE_ANGLE_TO_SPEED = 3
+    CORRECTION_VALUE_BALL_ANGLE_TO_SPEED = 3
+    # 敵陣ゴールとの角度からモータ速度変換時の補正値
+    CORRECTION_VALUE_EGOAL_ANGLE_TO_SPEED = 3
+    # 自陣ゴールとの角度からモータ速度変換時の補正値
+    CORRECTION_VALUE_MGOAL_ANGLE_TO_SPEED = 5
     # ボールとの距離からモータ速度変換時の補正値
     CORRECTION_VALUE_DISTANCE_TO_SPEED = 100
     # 距離センサの値がinfinityの時のモータの値
     SPEED_DISTANCE_INFINITE = 30
+    # ゴールが正面にある時のモータの値
+    SPEED_FRONT_GOAL = 40
+    # どうしようもない時用の値(ゆっくり旋回)
+    SPEED_NOTHING_TO_DO = 5, -5
 
     # コンストラクタ
     def __init__(self):
@@ -60,44 +68,91 @@ class MotorController:
         else:
             motorPower = int(distance * MotorController.CORRECTION_VALUE_DISTANCE_TO_SPEED)
         return motorPower, motorPower
- 
+
+    # 数値の絶対値を100に丸める
+    def roundOffWithin100(num):
+        if abs(num) > 100:
+            return num / abs(num) * 100
+        else:
+            return num
+
+    # ゴール情報を使ってモータの値を計算する
+    def calcMotorPowersByGoalAngle(self, eGoalAngle, mGoalAngle):
+        # ゴールが正面にある場合
+        if eGoalAngle == 0:
+            TRACE('calcMotor patern : enemyGoalAngle = 0')
+            # 前進
+            return MotorController.SPEED_FRONT_GOAL, MotorController.SPEED_FRONT_GOAL
+        # ゴールが正面にない場合
+        elif eGoalAngle > -180 and eGoalAngle < 180:
+            TRACE('calcMotor patern : -180 < enemyGoalAngle < 180')
+            # 絶対値が100を超える場合は100に丸める
+            eGoalAngle = self.roundOffWithin100(eGoalAngle)
+            # モータの値は補正をかける
+            speed = eGoalAngle / MotorController.CORRECTION_VALUE_EGOAL_ANGLE_TO_SPEED
+            return (-speed), speed
+        # ゴールとの角度が不正値の場合
+        else:
+            # 自分のゴールの角度を使う
+            # 自分のゴールとの角度が取れている場合
+            if mGoalAngle > -180 and mGoalAngle < 180:
+                TRACE('calcMotor patern : -180 < mGoalAngle < 180')
+                # とりあえず自軍のゴールの方向に旋回するのは危険そうなので逆に旋回する
+                mGoalAngle = self.roundOffWithin100(mGoalAngle)
+                # モータの値は補正をかける
+                speed = mGoalAngle / MotorController.CORRECTION_VALUE_MGOAL_ANGLE_TO_SPEED
+                return (-speed), speed
+            # 自分のゴールとの角度も不正値の場合
+            else:
+                TRACE('calcMotor patern : cannot detect goal')
+                # どうしようもない時用の値を使う
+                return MotorController.SPEED_NOTHING_TO_DO
+
+    # ボール情報を使ってモータの値を計算する
+    def calcMotorPowersByBallAngleAndDis(self, ballAngle, ballDis):
+        # ボールが正面にある場合
+        if ballAngle == 0:
+            TRACE('calcMotor patern : ballAngle = 0')
+            # 距離センサの値をボールまでの距離としてモータの値を計算
+            return self.getMotorPowerByDistance(ballDis)
+        # ボールが正面にない場合
+        else:
+            TRACE('calcMotor patern : boalAngle != 0')
+            # 絶対値が100を超える場合は100に丸める
+            ballAngle = self.roundOffWithin100(ballAngle)
+            # モータの値は補正をかける
+            speed = ballAngle / MotorController.CORRECTION_VALUE_BALL_ANGLE_TO_SPEED
+            return (-speed), speed
+    
     # モータの値を計算する
-    def calcMotorPowers(self, ballState, angle, distance):
+    def calcMotorPowers(self, ballState, shmem):
         # ボール保持状態の場合
         if ballState == BallStateE.HAVE_BALL:
-            # 前進(仮)
-            # 本来は画像処理結果を使ってゴールへ向かう
-            return 20, 20
+            # 画像処理結果を使ってゴールへ向かう
+            return self.calcMotorPowersByGoalAngle(shmem.enemyGoalAngle, shmem.myGoalAngle)
+
         # ボールなし状態の場合
         else:
-            # ボールが正面にある場合
-            if angle == 0:
-                # 距離センサの値をボールまでの距離としてモータの値を計算
-                return self.getMotorPowerByDistance(distance)
-            # ボールが正面にない場合
-            else:
-                # 絶対値が100を超える場合は100に丸める
-                if abs(angle) > 100:
-                    angle = angle / abs(angle) * 100
-                # モータの値は補正をかける
-                speed = angle / MotorController.CORRECTION_VALUE_ANGLE_TO_SPEED
-                return (-speed), speed
+            # 赤外線センサと距離センサの情報を使ってボールへ向かう
+            return self.calcMotorPowersByBallAngleAndDis(shmem.irAngle, shmem.uSonicDis)
+            
     
     # モータの値を計算しEV3へ送る
     def calcAndSendMotorPowers(self, shmem, serial):
         while 1:
             # ボール状態取得
             ballState = self.getBallState(shmem.uSonicDis)
+            DEBUG('ballState = ', ballState)
             # モータ値計算
-            motorPowers = self.calcMotorPowers(ballState, shmem.irAngle, shmem.uSonicDis)
+            motorPowers = self.calcMotorPowers(ballState, shmem)
             # 送信伝文生成
             sendText = str(motorPowers[0]) + "," + str(motorPowers[1]) + "\n"
             # モータ値送信
             serial.write(sendText)
-            # 0.1sごとに実行
+            # 0.05sごとに実行
             # 本当は全力でぶん回したい
             # ラズパイ側はマルチプロセスを採用しているので問題ないと思うが
-            # EV3側は計算資源を通信に占有される恐れがあるためとりあえず0.1sにしておく
+            # EV3側は計算資源を通信に占有される恐れがあるためとりあえず0.05sにしておく
             time.sleep(0.05)
     
     # 起動処理
