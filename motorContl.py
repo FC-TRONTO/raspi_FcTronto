@@ -70,7 +70,7 @@ class MotorController:
         return motorPower, motorPower
 
     # 数値の絶対値を100に丸める
-    def roundOffWithin100(num):
+    def roundOffWithin100(self, num):
         if abs(num) > 100:
             return num / abs(num) * 100
         else:
