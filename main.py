@@ -5,6 +5,7 @@ from ctypes import Structure, c_int, c_double
 import os
 from serialCom import SerialController
 from motorContl import MotorController
+from imageProcessing import ImageProcessing
 
 # 共有メモリの構造体
 class Point(Structure):
@@ -24,12 +25,21 @@ if __name__ == '__main__':
     serialController = SerialController()
     # モータ制御インスタンスの生成
     motorController = MotorController()
+    # 画像処理インスタンスの生成
+    imageProcessing = ImageProcessing()
+
     p_serialCon = Process(target=serialController.target, args=(shmem,))
     p_motorContl = Process(target=motorController.target, args=(shmem, serialController))
+    p_imageProcessing = Process(target=imageProcessing.target, args=(shmem,))
+
     p_serialCon.start()
     print('p_serialCon started')
     p_motorContl.start()
     print('p_motorContl started')
+    p_imageProcessing.start()
+    TRACE('p_imageProcessing started')
+
     p_motorContl.join()
     p_serialCon.join()
+    p_imageProcessing.join()
 
