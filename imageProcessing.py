@@ -59,7 +59,7 @@ class ImageProcessing:
     def colorDetect(self, hsv_img, hsv_range_min, hsv_range_max, color_name):
         mask = cv2.inRange(hsv_img, np.array(hsv_range_min), np.array(hsv_range_max))
         # 画角の前後左右と画像表示の上下左右を揃えるために画像を転置する。
-        cv2.imshow('Mask' + color_name, mask.transpose((1, 0)))
+        # cv2.imshow('Mask' + color_name, mask.transpose((1, 0)))
         contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
         convex_hull_list = []
@@ -122,7 +122,7 @@ class ImageProcessing:
         with picamera.PiCamera() as camera:
             with picamera.array.PiRGBArray(camera) as stream:
                 camera.resolution = (480, 480)
-                cap = cv2.VideoCapture('test.avi')
+                cap = cv2.VideoCapture(0)
 
                 while cap.isOpened():
                     # 画像を取得し、stream.arrayにRGBの順で映像データを格納
@@ -159,10 +159,10 @@ class ImageProcessing:
 
                     # 結果表示
                     # 画角の前後左右と画像表示の上下左右を揃えるために画像を転置する。
-                    cv2.imshow('Frame', stream.array.transpose((1, 0, 2)))
-                    cv2.moveWindow('Frame', 0, 30)
-                    cv2.moveWindow('MaskYellow', 482, 30)
-                    cv2.moveWindow('MaskBlue', 964, 30)
+                    # cv2.imshow('Frame', stream.array.transpose((1, 0, 2)))
+                    # cv2.moveWindow('Frame', 0, 30)
+                    # cv2.moveWindow('MaskYellow', 482, 30)
+                    # cv2.moveWindow('MaskBlue', 964, 30)
 
                     # 共有メモリに書き込む
                     if self.ENEMY_GOAL_COLOR == EnemyGoalColorE.YELLOW:

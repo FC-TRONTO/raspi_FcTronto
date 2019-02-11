@@ -17,15 +17,15 @@ class MotorController:
     # ボールとの角度からモータ速度変換時の補正値
     CORRECTION_VALUE_BALL_ANGLE_TO_SPEED = 3
     # 敵陣ゴールとの角度からモータ速度変換時の補正値
-    CORRECTION_VALUE_EGOAL_ANGLE_TO_SPEED = 3
+    CORRECTION_VALUE_EGOAL_ANGLE_TO_SPEED = 5
     # 自陣ゴールとの角度からモータ速度変換時の補正値
-    CORRECTION_VALUE_MGOAL_ANGLE_TO_SPEED = 5
+    CORRECTION_VALUE_MGOAL_ANGLE_TO_SPEED = 6
     # ボールとの距離からモータ速度変換時の補正値
     CORRECTION_VALUE_DISTANCE_TO_SPEED = 100
     # 距離センサの値がinfinityの時のモータの値
-    SPEED_DISTANCE_INFINITE = 30
+    SPEED_DISTANCE_INFINITE = 25
     # ゴールが正面にある時のモータの値
-    SPEED_FRONT_GOAL = 40
+    SPEED_FRONT_GOAL = 25
     # どうしようもない時用の値(ゆっくり旋回)
     SPEED_NOTHING_TO_DO = 5, -5
 
@@ -79,7 +79,7 @@ class MotorController:
     # ゴール情報を使ってモータの値を計算する
     def calcMotorPowersByGoalAngle(self, eGoalAngle, mGoalAngle):
         # ゴールが正面にある場合
-        if eGoalAngle == 0:
+        if abs(eGoalAngle) < 10:
             TRACE('calcMotor patern : enemyGoalAngle = 0')
             # 前進
             return MotorController.SPEED_FRONT_GOAL, MotorController.SPEED_FRONT_GOAL
@@ -123,6 +123,8 @@ class MotorController:
             speed = ballAngle / MotorController.CORRECTION_VALUE_BALL_ANGLE_TO_SPEED
             # 絶対値が100を超える場合は100に丸める
             speed = self.roundOffWithin100(speed)
+            # debug
+            speed = speed / abs(speed) * 5
             return (-speed), speed
     
     # モータの値を計算する
@@ -154,12 +156,12 @@ class MotorController:
             # 本当は全力でぶん回したい
             # ラズパイ側はマルチプロセスを採用しているので問題ないと思うが
             # EV3側は計算資源を通信に占有される恐れがあるためとりあえず0.05sにしておく
-            INFO('ball=' + str(ballState),
-                 'motor=' + str(motorPowers[0]).rjust(4) + ',' + str(motorPowers[1]).rjust(4),
-                 'IR=' + str(shmem.irAngle).rjust(4) + ',' + str(shmem.uSonicDis).rjust(4),
-                 'enemy=' + str(shmem.enemyGoalAngle).rjust(4) + ',' + str(shmem.enemyGoalDis).rjust(4),
-                 'my=' + str(shmem.myGoalAngle).rjust(4) + ',' + str(shmem.myGoalDis).rjust(4))
-            time.sleep(0.05)
+            INFO('ball=' + str(ballState).rjust(15),
+                    'motor=' + str(motorPowers[0]).rjust(4) + ',' + str(motorPowers[1]).rjust(4),
+                    'IR=' + str(shmem.irAngle).rjust(4) + ',' + str(shmem.uSonicDis).rjust(4),
+                    'enemy=' + str(shmem.enemyGoalAngle).rjust(4) + ',' + str(shmem.enemyGoalDis).rjust(4),
+                    'my=' + str(shmem.myGoalAngle).rjust(4) + ',' + str(shmem.myGoalDis).rjust(4))
+            time.sleep(0.1)
     
     # 起動処理
     def target(self, shmem, serial):
