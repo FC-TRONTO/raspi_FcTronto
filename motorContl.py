@@ -138,7 +138,7 @@ class MotorController:
         else:
             # 赤外線センサと距離センサの情報を使ってボールへ向かう
             return self.calcMotorPowersByBallAngleAndDis(shmem.irAngle, shmem.uSonicDis)
-            
+
     
     # モータの値を計算しEV3へ送る
     def calcAndSendMotorPowers(self, shmem, serial):
