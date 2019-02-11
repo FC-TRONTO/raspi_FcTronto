@@ -102,7 +102,7 @@ class MotorController:
                 speed = mGoalAngle / MotorController.CORRECTION_VALUE_MGOAL_ANGLE_TO_SPEED
                 # 絶対値が100を超える場合は100に丸める
                 speed = self.roundOffWithin100(speed)
-                return (-speed), speed
+                return speed, (-speed)
             # 自分のゴールとの角度も不正値の場合
             else:
                 TRACE('calcMotor patern : cannot detect goal')
