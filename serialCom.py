@@ -29,7 +29,7 @@ class SerialController:
     
     def write(self, sendData):
         self.ev3_send_serial.write(sendData)
-        TRACE('write', sendData.rstrip())
+        DEBUG('write', sendData.rstrip())
 
     def target(self, shmem):
         self.receiveDataLoop(shmem)
