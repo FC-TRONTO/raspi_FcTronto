@@ -1,7 +1,7 @@
 # coding: UTF-8
 
 from multiprocessing import Process, Value
-from ctypes import Structure, c_int, c_double
+from ctypes import Structure, c_int
 import os
 from serialCom import SerialController
 from motorContl import MotorController
@@ -10,7 +10,7 @@ from debug import ERROR, WARN, INFO, DEBUG, TRACE
 
 # 共有メモリの構造体
 class Point(Structure):
-    _fields_ = [('irAngle', c_int), ('uSonicDis', c_double), ('enemyGoalAngle', c_int), ('enemyGoalDis', c_int), ('myGoalAngle', c_int), ('myGoalDis', c_int)]
+    _fields_ = [('irAngle', c_int), ('isTouched', c_int), ('enemyGoalAngle', c_int), ('enemyGoalDis', c_int), ('myGoalAngle', c_int), ('myGoalDis', c_int)]
 
 def info(title):
     INFO(title)
