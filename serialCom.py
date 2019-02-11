@@ -22,10 +22,10 @@ class SerialController:
             if(len(sensorValues) == 2):
                 if(self.is_int(sensorValues[0])):
                     shmem.irAngle = int(sensorValues[0])
-                if(self.is_float(sensorValues[1])):
-                    shmem.uSonicDis = float(sensorValues[1])
+                if(self.is_int(sensorValues[1])):
+                    shmem.isTouched = int(sensorValues[1])
                 TRACE('irAngle =', shmem.irAngle)
-                TRACE('uSonicDis =', shmem.uSonicDis)
+                TRACE('isTouched =', shmem.isTouched)
     
     def write(self, sendData):
         self.ev3_send_serial.write(sendData)
