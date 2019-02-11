@@ -197,6 +197,7 @@ class MotorController:
             # EV3側は計算資源を通信に占有される恐れがあるためとりあえず0.05sにしておく
             INFO('ball=' + str(ballState),
                  'motor=' + str(motorPowers[0]).rjust(4) + ',' + str(motorPowers[1]).rjust(4),
+                 'IR=' + str(shmem.irAngle).rjust(4),
                  'touch=' + str(shmem.isTouched).rjust(4),
                  'enemy=' + str(shmem.enemyGoalAngle).rjust(4) + ',' + str(shmem.enemyGoalDis).rjust(4),
                  'my=' + str(shmem.myGoalAngle).rjust(4) + ',' + str(shmem.myGoalDis).rjust(4))
