@@ -136,7 +136,7 @@ class MotorController:
         else:
             # 赤外線センサと距離センサの情報を使ってボールへ向かう
             return self.calcMotorPowersByBallAngleAndDis(shmem.irAngle, shmem.uSonicDis)
-            
+
     
     # モータの値を計算しEV3へ送る
     def calcAndSendMotorPowers(self, shmem, serial):
@@ -154,6 +154,11 @@ class MotorController:
             # 本当は全力でぶん回したい
             # ラズパイ側はマルチプロセスを採用しているので問題ないと思うが
             # EV3側は計算資源を通信に占有される恐れがあるためとりあえず0.05sにしておく
+            INFO('ball=' + str(ballState),
+                 'motor=' + str(motorPowers[0]).rjust(4) + ',' + str(motorPowers[1]).rjust(4),
+                 'IR=' + str(shmem.irAngle).rjust(4) + ',' + str(shmem.uSonicDis).rjust(4),
+                 'enemy=' + str(shmem.enemyGoalAngle).rjust(4) + ',' + str(shmem.enemyGoalDis).rjust(4),
+                 'my=' + str(shmem.myGoalAngle).rjust(4) + ',' + str(shmem.myGoalDis).rjust(4))
             time.sleep(0.05)
     
     # 起動処理
