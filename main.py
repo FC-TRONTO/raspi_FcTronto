@@ -50,6 +50,7 @@ if __name__ == '__main__':
     p_imageProcessing.start()
     DEBUG('p_imageProcessing started')
 
+    """
     pre_goal_mode = 'none'
     goal_mode = 'none'
     while 1:
@@ -69,6 +70,7 @@ if __name__ == '__main__':
         # TODO: 終了処理追加
         # 終了処理は必須ではないが、現状は^C等による強制終了でしか
         # プログラムを停止できない
+    """
 
     p_motorContl.join()
     p_serialCon.join()

@@ -7,6 +7,7 @@ import cv2
 import numpy as np
 import picamera
 import picamera.array
+import os
 
 from math import atan2, degrees, hypot
 
@@ -41,14 +42,39 @@ class ImageProcessing:
         TRACE(self.GOAL_DISTANCE_TABLE)
         TRACE(self.GOAL_DISTANCE_TABLE[234])
 
+        self.goal_mode = 'none'
+        self.pre_goal_mode = 'none'
+
     # @brief 敵ゴールの色をsetする
     # @param set_color setする相手ゴールの色
     # @detail 引数にはEnemyGoalColorEの値を指定する
+    """
     def setEnemyGoalColor(self, set_color):
         color_name = ['YELLOW', 'BLUE']
         old_enemy_goal_color = self.ENEMY_GOAL_COLOR
         self.ENEMY_GOAL_COLOR = set_color
         INFO('Set Enemy Goal Color :', color_name[old_enemy_goal_color], '->', color_name[set_color])
+    """
+
+    def setEnemyGoalColorFromFile(self):
+        # ゴールモード設定ファイルを読み込み
+        try:
+            with open(os.path.join(os.path.dirname(__file__), '/webiopi/goal_mode.txt')) as f:
+                self.goal_mode = f.read()
+        # ファイル読み込み失敗
+        except:
+            WARN('goal mode file read failure')
+        # 前回読み込み時から変更があれば設定
+        if self.goal_mode != self.pre_goal_mode:
+            if self.goal_mode == 'yellow':
+                self.ENEMY_GOAL_COLOR = EnemyGoalColorE.YELLOW
+            elif self.goal_mode == 'blue':
+                self.ENEMY_GOAL_COLOR = EnemyGoalColorE.BLUE
+            else:
+                WARN('invalid goal mode')
+            INFO('goal_mode changed:', self.pre_goal_mode, '->', self.goal_mode)
+        # ゴールモードを記憶
+        self.pre_goal_mode = self.goal_mode
 
     # @brief 指定色の最大領域を検知する
     # @param hsv_img HSV変換後の処理対象画像
@@ -164,6 +190,9 @@ class ImageProcessing:
                     # cv2.moveWindow('MaskYellow', 482, 30)
                     # cv2.moveWindow('MaskBlue', 964, 30)
 
+                    # ゴールモード更新
+                    self.setEnemyGoalColorFromFile()
+                    
                     # 共有メモリに書き込む
                     if self.ENEMY_GOAL_COLOR == EnemyGoalColorE.YELLOW:
                         shmem.enemyGoalAngle = int(yellow_goal_angle)
