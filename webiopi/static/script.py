@@ -18,6 +18,12 @@ def stop(data):
     Popen("/home/pi/Desktop/raspi_FcTronto/webiopi/static/stop_main_py.sh")
 
 @webiopi.macro
+def set_motor_setting(setting):
+    read_file_path = os.path.join(os.path.dirname(__file__), '../motor_setting.txt')
+    with open(read_file_path, mode='w') as f:
+        f.write(setting)
+
+@webiopi.macro
 def set_goal_mode(color):
     with open('/home/pi/Desktop/raspi_FcTronto/webiopi/goal_mode.txt', mode='w') as f:
         if color == 'yellow':
