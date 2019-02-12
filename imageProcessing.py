@@ -1,6 +1,6 @@
 # coding: UTF-8
 
-from enum import Enum
+from enum import IntEnum
 from debug import ERROR, WARN, INFO, DEBUG, TRACE
 
 import cv2
@@ -12,7 +12,7 @@ from math import atan2, degrees, hypot
 
 
 # ボール保持状態用列挙型
-class EnemyGoalColorE(Enum):
+class EnemyGoalColorE(IntEnum):
     YELLOW = 0
     BLUE = 1
 
@@ -70,7 +70,7 @@ class ImageProcessing:
         mask = cv2.bitwise_and(mask, mask, mask=mask_0)
 
         # 画角の前後左右と画像表示の上下左右を揃えるために画像を転置する。
-        cv2.imshow('Mask' + color_name, mask.transpose((1, 0)))
+        # cv2.imshow('Mask' + color_name, mask.transpose((1, 0)))
         contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
         convex_hull_list = []
@@ -229,7 +229,7 @@ class ImageProcessing:
         with picamera.PiCamera() as camera:
             with picamera.array.PiRGBArray(camera) as stream:
                 camera.resolution = (480, 480)
-                cap = cv2.VideoCapture('test.avi')
+                cap = cv2.VideoCapture(0)
 
                 while cap.isOpened():
                     # 画像を取得し、stream.arrayにRGBの順で映像データを格納
