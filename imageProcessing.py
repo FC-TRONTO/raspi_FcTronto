@@ -59,7 +59,7 @@ class ImageProcessing:
     def setEnemyGoalColorFromFile(self):
         # ゴールモード設定ファイルを読み込み
         try:
-            with open(os.path.join(os.path.dirname(__file__), '/webiopi/goal_mode.txt')) as f:
+            with open('/home/pi/Desktop/raspi_FcTronto/webiopi/goal_mode.txt') as f:
                 self.goal_mode = f.read()
         # ファイル読み込み失敗
         except:

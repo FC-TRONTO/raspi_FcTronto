@@ -183,7 +183,7 @@ class MotorController:
     def getSetting(self):
         # モータ値設定ファイルを読み込み
         try:
-            with open(os.path.join(os.path.dirname(__file__), '/webiopi/motor_setting.txt')) as f:
+            with open('/home/pi/Desktop/raspi_FcTronto/webiopi/motor_setting.txt') as f:
                 motorSetting = f.read()
                 if motorSetting != '':
                     DEBUG('motor setting = ', motorSetting)
