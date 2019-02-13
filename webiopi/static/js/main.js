@@ -1,5 +1,9 @@
 webiopi()
  
+function reboot() {
+	webiopi().callMacro("reboot", 0, callbackGetValue);
+}
+
 function start() {
 	webiopi().callMacro("start", 0, callbackGetValue);
 }

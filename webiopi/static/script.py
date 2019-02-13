@@ -5,6 +5,12 @@ import subprocess
 from subprocess import Popen
 
 @webiopi.macro
+def reboot(data):
+    # subprocess.Popenを使ってrebootを実行する
+    cmd = "sudo reboot"
+    Popen(cmd.strip().split(" "))
+
+@webiopi.macro
 def start(data):
     # subprocess.Popenを使ってmain.pyを実行する
     cmd = "python /home/pi/Desktop/raspi_FcTronto/main.py"
