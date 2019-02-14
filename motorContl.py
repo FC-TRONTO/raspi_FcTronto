@@ -13,6 +13,11 @@ class BallStateE(Enum):
 
 # モータ制御用クラス
 class MotorController:
+    #移動アルゴリズム切り替え用変数
+    DEBUG_SHOOT_ALGORITHM = 0
+    DEBUG_CHASE_ALGORITHM = 0
+
+
     # モータ制御用パラメータ群
     # ボール保持状態判定閾値
     THRESHOLD_BALL_DETECT = 0.05
@@ -32,8 +37,20 @@ class MotorController:
     SPEED_FRONT_BALL = 30
     # どうしようもない時用の値(ゆっくり旋回)
     SPEED_NOTHING_TO_DO = 5, -5
+    # 停止
+    SPEED_STOP = 0, 0
     # 設定値->モータ値対応付け用辞書
     DIC_SETTING_TO_MOTOR_VALUE = {'STOP' : (0, 0)}
+
+    # 移動アルゴリズム2で使用
+    # シュート時の基準スピード
+    SPEED_SHOOT = 45
+    # 比例項の係数
+    K_SHOOT_ANGLE = 0.25  # SPEED_SHOOT / 180にするとよい？
+    # ボール追跡時の基準スピード
+    SPEED_CHASE = 45
+    # 比例項の係数
+    K_CHASE_ANGLE = 0.25  # SPEED_CHASE / 180にするとよい？
 
     # コンストラクタ
     def __init__(self):
@@ -101,70 +118,113 @@ class MotorController:
 
     # ゴール情報を使ってモータの値を計算する
     def calcMotorPowersByGoalAngle(self, eGoalAngle, mGoalAngle):
-        # ゴールが正面にある場合
-        if abs(eGoalAngle) < 10:
-            TRACE('calcMotor patern : enemyGoalAngle = 0')
-            # 前進
-            return MotorController.SPEED_FRONT_GOAL, MotorController.SPEED_FRONT_GOAL
-        # ゴールが正面にない場合
-        elif eGoalAngle > -180 and eGoalAngle < 180:
-            TRACE('calcMotor patern : -180 < enemyGoalAngle < 180')
-            # モータの値は補正をかける
-            speed = eGoalAngle / MotorController.CORRECTION_VALUE_EGOAL_ANGLE_TO_SPEED
-            # 絶対値が100を超える場合は100に丸める
-            speed = self.roundOffWithin100(speed)
-            return (-speed), speed
-        # ゴールとの角度が不正値の場合
-        else:
-            # 自分のゴールの角度を使う
-            # 自分のゴールとの角度が取れている場合
-            if mGoalAngle > -180 and mGoalAngle < 180:
-                TRACE('calcMotor patern : -180 < mGoalAngle < 180')
-                # とりあえず自軍のゴールの方向に旋回するのは危険そうなので逆に旋回する
+        if self.DEBUG_SHOOT_ALGORITHM == 0:
+            # ゴールが正面にある場合
+            if abs(eGoalAngle) < 10:
+                TRACE('calcMotor patern : enemyGoalAngle = 0')
+                # 前進
+                return MotorController.SPEED_FRONT_GOAL, MotorController.SPEED_FRONT_GOAL
+            # ゴールが正面にない場合
+            elif -180 < eGoalAngle < 180:
+                TRACE('calcMotor patern : -180 < enemyGoalAngle < 180')
                 # モータの値は補正をかける
-                speed = mGoalAngle / MotorController.CORRECTION_VALUE_MGOAL_ANGLE_TO_SPEED
+                speed = eGoalAngle / MotorController.CORRECTION_VALUE_EGOAL_ANGLE_TO_SPEED
                 # 絶対値が100を超える場合は100に丸める
                 speed = self.roundOffWithin100(speed)
-                return speed, (-speed)
-            # 自分のゴールとの角度も不正値の場合
+                return (-speed), speed
+            # ゴールとの角度が不正値の場合
             else:
-                TRACE('calcMotor patern : cannot detect goal')
-                # どうしようもない時用の値を使う
-                return MotorController.SPEED_NOTHING_TO_DO
+                # 自分のゴールの角度を使う
+                # 自分のゴールとの角度が取れている場合
+                if -180 < mGoalAngle < 180:
+                    TRACE('calcMotor patern : -180 < mGoalAngle < 180')
+                    # とりあえず自軍のゴールの方向に旋回するのは危険そうなので逆に旋回する
+                    # モータの値は補正をかける
+                    speed = mGoalAngle / MotorController.CORRECTION_VALUE_MGOAL_ANGLE_TO_SPEED
+                    # 絶対値が100を超える場合は100に丸める
+                    speed = self.roundOffWithin100(speed)
+                    return speed, (-speed)
+                # 自分のゴールとの角度も不正値の場合
+                else:
+                    TRACE('calcMotor patern : cannot detect goal')
+                    # どうしようもない時用の値を使う
+                    return MotorController.SPEED_NOTHING_TO_DO
+        elif self.DEBUG_SHOOT_ALGORITHM == 1:
+            # ゴールが正面にある場合
+            # P制御
+            if -180 < eGoalAngle < 180:
+                TRACE('calcMotor patern : -180 < enemyGoalAngle < 180')
+                # ゴール角度が正面からずれるほどたくさん曲がる
+                return MotorController.SPEED_SHOOT - MotorController.K_SHOOT_ANGLE * eGoalAngle,\
+                       MotorController.SPEED_SHOOT + MotorController.K_SHOOT_ANGLE * eGoalAngle
+            # ゴールとの角度が不正値の場合
+            else:
+                # 自分のゴールの角度を使う
+                # 自分のゴールとの角度が取れている場合
+                if -180 < mGoalAngle < 180:
+                    TRACE('calcMotor patern : -180 < mGoalAngle < 180')
+                    # とりあえず自軍のゴールの方向に旋回するのは危険そうなので逆に旋回する
+                    # モータの値は補正をかける
+                    speed = mGoalAngle / MotorController.CORRECTION_VALUE_MGOAL_ANGLE_TO_SPEED
+                    # 絶対値が100を超える場合は100に丸める
+                    speed = self.roundOffWithin100(speed)
+                    return speed, (-speed)
+                # 自分のゴールとの角度も不正値の場合
+                else:
+                    TRACE('calcMotor patern : cannot detect goal')
+                    # どうしようもない時用の値を使う
+                    return MotorController.SPEED_NOTHING_TO_DO
+        else:
+            ERROR('Invalid Value : DEBUG_SHOOT_ALGORITHM =', self.DEBUG_SHOOT_ALGORITHM)
+            return MotorController.SPEED_STOP
 
     # ボール情報を使ってモータの値を計算する
     def calcMotorPowersByBallAngleAndDis(self, ballAngle, ballDis):
-        # ボールが正面にある場合
-        if ballAngle == 0:
-            TRACE('calcMotor patern : ballAngle = 0')
-            # 距離センサの値をボールまでの距離としてモータの値を計算
-            return self.getMotorPowerByDistance(ballDis)
-        # ボールが正面にない場合
-        else:
-            TRACE('calcMotor patern : boalAngle != 0')
-            # モータの値は補正をかける
-            speed = ballAngle / MotorController.CORRECTION_VALUE_BALL_ANGLE_TO_SPEED
-            # 絶対値が100を超える場合は100に丸める
-            speed = self.roundOffWithin100(speed)
-            # debug
-            speed = speed / abs(speed) * 5
-            return (-speed), speed
+        if self.DEBUG_CHASE_ALGORITHM == 0:
+            # ボールが正面にある場合
+            if ballAngle == 0:
+                TRACE('calcMotor patern : ballAngle = 0')
+                # 距離センサの値をボールまでの距離としてモータの値を計算
+                return self.getMotorPowerByDistance(ballDis)
+            # ボールが正面にない場合
+            else:
+                TRACE('calcMotor patern : boalAngle != 0')
+                # モータの値は補正をかける
+                speed = ballAngle / MotorController.CORRECTION_VALUE_BALL_ANGLE_TO_SPEED
+                # 絶対値が100を超える場合は100に丸める
+                speed = self.roundOffWithin100(speed)
+                # debug
+                speed = speed / abs(speed) * 5
+                return (-speed), speed
+        if self.DEBUG_CHASE_ALGORITHM == 1:
+            # P制御
+            return self.roundOffWithin100(MotorController.SPEED_CHASE - MotorController.K_CHASE_ANGLE * ballAngle), \
+                   self.roundOffWithin100(MotorController.SPEED_CHASE + MotorController.K_CHASE_ANGLE * ballAngle)
+
     
     # ボールとの角度のみを使ってモータの値を計算する
     def calcMotorPowersByBallAngle(self, ballAngle):
-        # ボールが正面にある場合
-        if ballAngle == 0:
-            TRACE('calcMotor patern : ballAngle = 0')
-            # モータの値は固定値で前進
-            return MotorController.SPEED_FRONT_BALL, MotorController.SPEED_FRONT_BALL
-        # ボールが正面にない場合
+        if self.DEBUG_CHASE_ALGORITHM == 0:
+            # ボールが正面にある場合
+            if ballAngle == 0:
+                TRACE('calcMotor patern : ballAngle = 0')
+                # モータの値は固定値で前進
+                return MotorController.SPEED_FRONT_BALL, MotorController.SPEED_FRONT_BALL
+            # ボールが正面にない場合
+            else:
+                TRACE('calcMotor patern : boalAngle != 0')
+                # モータの値は補正をかける
+                speed = ballAngle / MotorController.CORRECTION_VALUE_BALL_ANGLE_TO_SPEED
+                # 絶対値が100を超える場合は100に丸める
+                speed = self.roundOffWithin100(speed)
+                return (-speed), speed
+        elif self.DEBUG_CHASE_ALGORITHM == 1:
+            # P制御
+            return self.roundOffWithin100(MotorController.SPEED_CHASE - MotorController.K_CHASE_ANGLE * ballAngle), \
+                   self.roundOffWithin100(MotorController.SPEED_CHASE + MotorController.K_CHASE_ANGLE * ballAngle)
         else:
-            TRACE('calcMotor patern : boalAngle != 0')
-            # モータの値は補正をかける
-            speed = ballAngle / MotorController.CORRECTION_VALUE_BALL_ANGLE_TO_SPEED
-            # 絶対値が100を超える場合は100に丸める
-            speed = self.roundOffWithin100(speed)
-            return (-speed), speed
+            ERROR('Invalid Value : DEBUG_CHASE_ALGORITHM =', self.DEBUG_CHASE_ALGORITHM)
+            return MotorController.SPEED_STOP
     
     # モータの値を計算する
     def calcMotorPowers(self, ballState, shmem):
