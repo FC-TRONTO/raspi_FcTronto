@@ -4,6 +4,7 @@ from serialCom import SerialController
 import time
 from enum import Enum
 from debug import ERROR, WARN, INFO, DEBUG, TRACE
+import os
 
 # ボール保持状態用列挙型
 class BallStateE(Enum):
@@ -31,6 +32,8 @@ class MotorController:
     SPEED_FRONT_BALL = 30
     # どうしようもない時用の値(ゆっくり旋回)
     SPEED_NOTHING_TO_DO = 5, -5
+    # 設定値->モータ値対応付け用辞書
+    DIC_SETTING_TO_MOTOR_VALUE = {'STOP' : (0, 0)}
 
     # コンストラクタ
     def __init__(self):
@@ -176,6 +179,22 @@ class MotorController:
             #return self.calcMotorPowersByBallAngleAndDis(shmem.irAngle, shmem.uSonicDis)
             # 距離センサは使用しない
             return self.calcMotorPowersByBallAngle(shmem.irAngle)
+    
+    def getSetting(self):
+        # モータ値設定ファイルを読み込み
+        try:
+            with open('/home/pi/Desktop/raspi_FcTronto/webiopi/motor_setting.txt') as f:
+                motorSetting = f.read()
+                if motorSetting != '':
+                    DEBUG('motor setting = ', motorSetting)
+                    return motorSetting
+                else:
+                    TRACE('motor setting is NONE')
+                    return 'NONE'
+        # ファイル読み込み失敗
+        except:
+            WARN('motor setting file read failure')
+            return 'NONE'
 
     # モータの値を計算しEV3へ送る
     def calcAndSendMotorPowers(self, shmem, serial):
@@ -187,8 +206,10 @@ class MotorController:
             motorPowers = self.calcMotorPowers(ballState, shmem)
             # モーター値後処理(現在は首振り検知処理のみ)
             motorPowers = self.motorControlPostProcessor.escapeSwing(motorPowers)
-            # モータ値記憶
-            self.pre_motor_powers = motorPowers
+            # 設定ファイルの内容を反映
+            setting = self.getSetting()
+            if setting != 'NONE':
+                motorPowers = MotorController.DIC_SETTING_TO_MOTOR_VALUE.get(setting)
             # 送信伝文生成
             sendText = str(motorPowers[0]) + "," + str(motorPowers[1]) + "\n"
             # モータ値送信

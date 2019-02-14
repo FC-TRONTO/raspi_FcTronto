@@ -259,14 +259,14 @@ class ImageProcessing:
 
                     # 結果表示
                     # 画角の前後左右と画像表示の上下左右を揃えるために画像を転置する。
-
+                    
                     if self.DEBUG_IMSHOW == self.ENABLE:
                         cv2.imshow('Frame', stream.array.transpose((1, 0, 2)))
                         cv2.moveWindow('Frame', 0, 30)
                         cv2.moveWindow('MaskYellow', 482, 30)
                         cv2.moveWindow('MaskBlue', 964, 30)
                         cv2.moveWindow('MaskWall', 482, 502)
-                    
+              
                     # ゴールモード更新
                     self.setEnemyGoalColorFromFile()
                     

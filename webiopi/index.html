@@ -9,9 +9,13 @@
 	</head>
 	<body>
 		<img src="/static/image/s_teamLogo2.png">
+		<img src="/static/image/qr_github_url.png">
+		<input type="button" value="REBOOT" class="python-important" onClick="reboot()">
 		<br>
 		<input type="button" value="program start" class="python" onClick="start()">
 		<input type="button" value="program stop" class="python" onClick="stop()">
+		<input type="button" value="motor stop" class="python" onClick="set_motor_setting('STOP')">
+		<input type="button" value="motor stop end" class="python" onClick="set_motor_setting('NONE')">
 		<input type="button" value="goal mode : YELLOW" class="python" onClick="set_goal_mode('yellow')">
 		<input type="button" value="goal mode : BLUE" class="python" onClick="set_goal_mode('blue')">
 	</body>
