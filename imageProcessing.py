@@ -28,8 +28,10 @@ class ImageProcessing:
     BLUE_HSV_RANGE_MAX = [120, 150, 40]
     YELLOW_HSV_RANGE_MIN = [15, 127, 30]
     YELLOW_HSV_RANGE_MAX = [30, 255, 255]
-    WALL_HSV_RANGE_MIN = [25, 70, 0]
-    WALL_HSV_RANGE_MAX = [120, 255, 255]
+    FIELD_HSV_RANGE_MIN = [42, 70, 20]
+    FIELD_HSV_RANGE_MAX = [60, 240, 100]
+    FIELD_AND_WALL_HSV_RANGE_MIN = [25, 70, 0]
+    FIELD_AND_WALL_RANGE_MAX = [120, 255, 255]
 
     CAMERA_CENTER_CX_T = 220
     CAMERA_CENTER_CY_T = 240
@@ -37,7 +39,7 @@ class ImageProcessing:
     CAMERA_CENTER_CY = CAMERA_CENTER_CX_T
     CAMERA_RANGE_R = 170
 
-    KARNEL_R = 5
+    KARNEL_R = 4
     KARNEL_SIZE = 2 * KARNEL_R + 1
 
     GOAL_DISTANCE_TABLE = []
@@ -144,7 +146,7 @@ class ImageProcessing:
         kernel = np.zeros((self.KARNEL_SIZE, self.KARNEL_SIZE), np.uint8)
         cv2.circle(kernel, (self.KARNEL_R, self.KARNEL_R), self.KARNEL_R, 1, thickness=-1)
         mask = cv2.dilate(mask, kernel, iterations=1)
-        TRACE(kernel)
+
         # 画角の前後左右と画像表示の上下左右を揃えるために画像を転置する。
         cv2.imshow('Mask' + color_name, mask.transpose((1, 0)))
         contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
@@ -211,7 +213,7 @@ class ImageProcessing:
                                                                                      self.YELLOW_HSV_RANGE_MAX,
                                                                                      'Yellow')
         if yellow_cx_t > -1:
-            self.draw_marker(frame, yellow_cx_t, yellow_cy_t, (30, 255, 30))
+            self.draw_marker(frame, yellow_cx_t, yellow_cy_t, (30, 255, 255))
 
         # 青色領域の検知
         blue_cx_t, blue_cy_t, blue_area_size, blue_convex = self.colorDetect(hsv_img, self.BLUE_HSV_RANGE_MIN,
@@ -221,7 +223,10 @@ class ImageProcessing:
             self.draw_marker(frame, blue_cx_t, blue_cy_t, (255, 30, 30))
 
         # 壁の検知
-        wall_cx_t, wall_cy_t, wall_area_size, wall_convex = self.colorDetect(hsv_img, self.WALL_HSV_RANGE_MIN, self.WALL_HSV_RANGE_MAX, 'Wall')
+        field_cx_t, field_cy_t, field_area_size, field_convex = self.wallDetect(hsv_img, self.FIELD_HSV_RANGE_MIN, self.FIELD_HSV_RANGE_MAX, 'Wall')
+        if field_cx_t > -1:
+            cv2.drawContours(frame, [field_convex], 0, (0, 255, 0), thickness=1)
+            self.draw_marker(frame, field_cx_t, field_cy_t, (0, 128, 0))
 
         DEBUG('Yellow :' + str(yellow_area_size).rjust(8), 'Blue :' + str(blue_area_size).rjust(8))
 
@@ -230,16 +235,17 @@ class ImageProcessing:
         yellow_cy = yellow_cx_t
         blue_cx = blue_cy_t
         blue_cy = blue_cx_t
+        field_cx = field_cy_t
+        field_cy = field_cx_t
 
         yellow_goal_angle, yellow_goal_distance = self.calcGoalDirection(yellow_cx, yellow_cy, yellow_area_size)
         blue_goal_angle, blue_goal_distance = self.calcGoalDirection(blue_cx, blue_cy, blue_area_size)
+        field_center_angle, field_center_distance = self.calcGoalDirection(field_cx, field_cy, field_area_size)
         DEBUG('Yellow : Angle=' + str(yellow_goal_angle).rjust(4), 'Dis=' + str(yellow_goal_distance).rjust(3),
-              'Blue : Angle=' + str(blue_goal_angle).rjust(4), 'Dis=' + str(blue_goal_distance).rjust(3))
+              'Blue : Angle=' + str(blue_goal_angle).rjust(4), 'Dis=' + str(blue_goal_distance).rjust(3),
+              'field : Angle=' + str(field_center_angle).rjust(4), 'Dis=' + str(field_center_distance).rjust(3),)
 
-        return yellow_goal_angle, yellow_goal_distance, blue_goal_angle, blue_goal_distance
-
-
-
+        return yellow_goal_angle, yellow_goal_distance, blue_goal_angle, blue_goal_distance, field_center_angle, field_center_distance
 
     # @brief 画像処理のmain処理
     # @param shmem 共有メモリ
@@ -249,13 +255,13 @@ class ImageProcessing:
         with picamera.PiCamera() as camera:
             with picamera.array.PiRGBArray(camera) as stream:
                 camera.resolution = (480, 480)
-                cap = cv2.VideoCapture(0)
+                cap = cv2.VideoCapture('test.avi')
 
                 while cap.isOpened():
                     # 画像を取得し、stream.arrayにRGBの順で映像データを格納
                     camera.capture(stream, 'bgr', use_video_port=True)
 
-                    yellow_goal_angle, yellow_goal_distance, blue_goal_angle, blue_goal_distance = self.imageProcessingFrame(stream.array, shmem)
+                    yellow_goal_angle, yellow_goal_distance, blue_goal_angle, blue_goal_distance, field_center_angle, field_center_distance = self.imageProcessingFrame(stream.array, shmem)
 
                     # 結果表示
                     # 画角の前後左右と画像表示の上下左右を揃えるために画像を転置する。
@@ -276,11 +282,15 @@ class ImageProcessing:
                         shmem.enemyGoalDis = int(yellow_goal_distance)
                         shmem.myGoalAngle = int(blue_goal_angle)
                         shmem.myGoalDis = int(blue_goal_distance)
+                        shmem.fieldCenterAngle = int(field_center_angle)
+                        shmem.fieldCenterDis = int(field_center_distance)
                     elif self.enemy_goal_color == EnemyGoalColorE.BLUE:
                         shmem.enemyGoalAngle = int(blue_goal_angle)
                         shmem.enemyGoalDis = int(blue_goal_distance)
                         shmem.myGoalAngle = int(yellow_goal_angle)
                         shmem.myGoalDis = int(yellow_goal_distance)
+                        shmem.fieldCenterAngle = int(field_center_angle)
+                        shmem.fieldCenterDis = int(field_center_distance)
                     else:
                         ERROR('Invalid Error : ENEMY_GOAL_COLOR =', self.enemy_goal_color)
 

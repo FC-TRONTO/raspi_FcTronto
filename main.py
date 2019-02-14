@@ -10,7 +10,7 @@ from debug import ERROR, WARN, INFO, DEBUG, TRACE
 
 # 共有メモリの構造体
 class Point(Structure):
-    _fields_ = [('irAngle', c_int), ('isTouched', c_int), ('enemyGoalAngle', c_int), ('enemyGoalDis', c_int), ('myGoalAngle', c_int), ('myGoalDis', c_int)]
+    _fields_ = [('irAngle', c_int), ('isTouched', c_int), ('enemyGoalAngle', c_int), ('enemyGoalDis', c_int), ('myGoalAngle', c_int), ('myGoalDis', c_int), ('fieldCenterAngle', c_int), ('fieldCenterDis', c_int)]
 
 def info(title):
     INFO(title)
