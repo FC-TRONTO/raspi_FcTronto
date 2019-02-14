@@ -249,7 +249,7 @@ class ImageProcessing:
         with picamera.PiCamera() as camera:
             with picamera.array.PiRGBArray(camera) as stream:
                 camera.resolution = (480, 480)
-                cap = cv2.VideoCapture('test.avi')
+                cap = cv2.VideoCapture(0)
 
                 while cap.isOpened():
                     # 画像を取得し、stream.arrayにRGBの順で映像データを格納
