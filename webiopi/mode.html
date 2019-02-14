@@ -13,12 +13,8 @@
 </head>
 
 <body>
-  <nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4">
+  <nav class="navbar navbar-expand-sm navbar-dark bg-dark mb-3">
     <a class="navbar-brand" href="#">Webiopi</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarCollapse">
     <ul class="navbar-nav mr-auto">
       <li class="nav-item active">
         <a class="nav-link" href="/index.html">TopPage</a>
@@ -29,19 +25,18 @@
   </nav>
 
   <main role="main" class="container">
-    <h1>Mode change</h1>
     program : 
-    <input type="button" value="start" class="btn btn-secondary" onClick="start()">
-		<input type="button" value="stop" class="btn btn-secondary" onClick="stop()">
+    <input type="button" value="start" class="btn btn-secondary btn-sm" onClick="start()">
+		<input type="button" value="stop" class="btn btn-secondary btn-sm" onClick="stop()">
     <br>
     motor : 
-    <input type="button" value="stop" class="btn btn-secondary" onClick="set_motor_setting('STOP')">
-	  <input type="button" value="stop end" class="btn btn-secondary" onClick="set_motor_setting('NONE')">
+    <input type="button" value="stop" class="btn btn-secondary btn-sm" onClick="set_motor_setting('STOP')">
+	  <input type="button" value="stop end" class="btn btn-secondary btn-sm" onClick="set_motor_setting('NONE')">
     <br>
     goal mode : 
-    <input type="button" value="yellow" class="btn btn-secondary" onClick="set_goal_mode('yellow')">
-    <input type="button" value="blue" class="btn btn-secondary" onClick="set_goal_mode('blue')">
-	  <input type="button" value="REBOOT" class="btn btn-danger system" onClick="reboot()">
+    <input type="button" value="yellow" class="btn btn-secondary btn-sm" onClick="set_goal_mode('yellow')">
+    <input type="button" value="blue" class="btn btn-secondary btn-sm" onClick="set_goal_mode('blue')">
+	  <input type="button" value="REBOOT" class="btn btn-danger system btn-sm" onClick="reboot()">
   </main>
 
   <script src="/static/js/jquery-3.3.1.min.js"></script>

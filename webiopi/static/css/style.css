@@ -1,10 +1,21 @@
 main {
-	line-height: 4;
+	line-height: 3;
 }
 
 .system {
 	position: absolute;
 	bottom: 0;
+}
+
+/* header */
+.navbar {
+  min-height: 10px !important;
+  max-height: 30px !important;
+}
+
+.navbar-nav > li > a {
+  padding-top: 10px !important;
+  padding-bottom: 10px !important;
 }
 
 .python {

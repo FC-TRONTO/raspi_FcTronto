@@ -13,12 +13,8 @@
 </head>
 
 <body>
-  <nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4">
+  <nav class="navbar navbar-expand-sm navbar-dark bg-dark mb-3">
     <a class="navbar-brand" href="#">Webiopi</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarCollapse">
     <ul class="navbar-nav mr-auto">
       <li class="nav-item active">
         <a class="nav-link" href="/mode.html">SetMode</a>
@@ -29,11 +25,10 @@
   </nav>
 
   <main role="main" class="container">
-    <h1>Webiopi Top Page</h1>
     <p>各設定は上のタブから行えます</p>
     GitHub URL ->
 		<img src="/static/image/qr_github_url.png">
-    <input type="button" value="REBOOT" class="btn btn-danger system" onClick="reboot()">
+    <input type="button" value="REBOOT" class="btn btn-danger system btn-sm" onClick="reboot()">
   </main>
 
   <script src="/static/js/jquery-3.3.1.min.js"></script>

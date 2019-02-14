@@ -13,12 +13,8 @@
 </head>
 
 <body>
-  <nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4">
+  <nav class="navbar navbar-expand-sm navbar-dark bg-dark mb-3">
     <a class="navbar-brand" href="#">Webiopi</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarCollapse">
     <ul class="navbar-nav mr-auto">
       <li class="nav-item active">
         <a class="nav-link" href="/index.html">TopPage</a>
@@ -29,94 +25,93 @@
   </nav>
 
   <main role="main" class="container">
-    <h1>Parameter change</h1>
     shoot algorithm pattern : 
     <div class="btn-group btn-group-toggle" data-toggle="buttons">
       <label class="btn btn-secondary">
-        <input type="button" value="0" class="btn btn-secondary" onClick="set_shoot_algo(0)">
+        <input type="button" value="0" class="btn btn-secondary btn-sm" onClick="set_shoot_algo(0)">
       </label>
       <label class="btn btn-secondary">
-        <input type="button" value="1" class="btn btn-secondary" onClick="set_shoot_algo(1)">
+        <input type="button" value="1" class="btn btn-secondary btn-sm" onClick="set_shoot_algo(1)">
       </label>
       <label class="btn btn-secondary">
-        <input type="button" value="2" class="btn btn-secondary" onClick="set_shoot_algo(2)">
+        <input type="button" value="2" class="btn btn-secondary btn-sm" onClick="set_shoot_algo(2)">
       </label>
     </div>
     <br>
     chase algorithm pattern : 
     <div class="btn-group btn-group-toggle" data-toggle="buttons">
       <label class="btn btn-secondary">
-        <input type="button" value="0" class="btn btn-secondary" onClick="set_chase_algo(0)">
+        <input type="button" value="0" class="btn btn-secondary btn-sm" onClick="set_chase_algo(0)">
       </label>
       <label class="btn btn-secondary">
-        <input type="button" value="1" class="btn btn-secondary" onClick="set_chase_algo(1)">
+        <input type="button" value="1" class="btn btn-secondary btn-sm" onClick="set_chase_algo(1)">
       </label>
     </div>
     <br>
     shoot speed : 
     <div class="btn-group btn-group-toggle" data-toggle="buttons">
       <label class="btn btn-secondary">
-        <input type="button" value="40" class="btn btn-secondary" onClick="set_shoot_speed(40)">
+        <input type="button" value="40" class="btn btn-secondary btn-sm" onClick="set_shoot_speed(40)">
       </label>
       <label class="btn btn-secondary">
-        <input type="button" value="50" class="btn btn-secondary" onClick="set_shoot_speed(50)">
+        <input type="button" value="50" class="btn btn-secondary btn-sm" onClick="set_shoot_speed(50)">
       </label>
       <label class="btn btn-secondary">
-        <input type="button" value="60" class="btn btn-secondary" onClick="set_shoot_speed(60)">
+        <input type="button" value="60" class="btn btn-secondary btn-sm" onClick="set_shoot_speed(60)">
       </label>
       <label class="btn btn-secondary">
-        <input type="button" value="70" class="btn btn-secondary" onClick="set_shoot_speed(70)">
+        <input type="button" value="70" class="btn btn-secondary btn-sm" onClick="set_shoot_speed(70)">
       </label>
     </div>
     <br>
     k shoot angle : 
     <div class="btn-group btn-group-toggle" data-toggle="buttons">
       <label class="btn btn-secondary">
-        <input type="button" value="0.3" class="btn btn-secondary" onClick="set_k_shoot_angle(0.3)">
+        <input type="button" value="0.3" class="btn btn-secondary btn-sm" onClick="set_k_shoot_angle(0.3)">
       </label>
       <label class="btn btn-secondary">
-        <input type="button" value="0.4" class="btn btn-secondary" onClick="set_k_shoot_angle(0.4)">
+        <input type="button" value="0.4" class="btn btn-secondary btn-sm" onClick="set_k_shoot_angle(0.4)">
       </label>
       <label class="btn btn-secondary">
-        <input type="button" value="0.5" class="btn btn-secondary" onClick="set_k_shoot_angle(0.5)">
+        <input type="button" value="0.5" class="btn btn-secondary btn-sm" onClick="set_k_shoot_angle(0.5)">
       </label>
       <label class="btn btn-secondary">
-        <input type="button" value="0.6" class="btn btn-secondary" onClick="set_k_shoot_angle(0.6)">
+        <input type="button" value="0.6" class="btn btn-secondary btn-sm" onClick="set_k_shoot_angle(0.6)">
       </label>
     </div>
     <br>
     chase speed : 
     <div class="btn-group btn-group-toggle" data-toggle="buttons">
       <label class="btn btn-secondary">
-        <input type="button" value="40" class="btn btn-secondary" onClick="set_chase_speed(40)">
+        <input type="button" value="40" class="btn btn-secondary btn-sm" onClick="set_chase_speed(40)">
       </label>
       <label class="btn btn-secondary">
-        <input type="button" value="50" class="btn btn-secondary" onClick="set_chace_speed(50)">
+        <input type="button" value="50" class="btn btn-secondary btn-sm" onClick="set_chace_speed(50)">
       </label>
       <label class="btn btn-secondary">
-        <input type="button" value="60" class="btn btn-secondary" onClick="set_chase_speed(60)">
+        <input type="button" value="60" class="btn btn-secondary btn-sm" onClick="set_chase_speed(60)">
       </label>
       <label class="btn btn-secondary">
-        <input type="button" value="70" class="btn btn-secondary" onClick="set_chase_speed(70)">
+        <input type="button" value="70" class="btn btn-secondary btn-sm" onClick="set_chase_speed(70)">
       </label>
     </div>
     <br>
     k chase angle : 
     <div class="btn-group btn-group-toggle" data-toggle="buttons">
       <label class="btn btn-secondary">
-        <input type="button" value="0.3" class="btn btn-secondary" onClick="set_k_chase_angle(0.3)">
+        <input type="button" value="0.3" class="btn btn-secondary btn-sm" onClick="set_k_chase_angle(0.3)">
       </label>
       <label class="btn btn-secondary">
-        <input type="button" value="0.4" class="btn btn-secondary" onClick="set_k_chase_angle(0.4)">
+        <input type="button" value="0.4" class="btn btn-secondary btn-sm" onClick="set_k_chase_angle(0.4)">
       </label>
       <label class="btn btn-secondary">
-        <input type="button" value="0.5" class="btn btn-secondary" onClick="set_k_chase_angle(0.5)">
+        <input type="button" value="0.5" class="btn btn-secondary btn-sm" onClick="set_k_chase_angle(0.5)">
       </label>
       <label class="btn btn-secondary">
-        <input type="button" value="0.6" class="btn btn-secondary" onClick="set_k_chase_angle(0.6)">
+        <input type="button" value="0.6" class="btn btn-secondary btn-sm" onClick="set_k_chase_angle(0.6)">
       </label>
     </div>
-	  <input type="button" value="REBOOT" class="btn btn-danger system" onClick="reboot()">
+	  <input type="button" value="REBOOT" class="btn btn-danger system btn-sm" onClick="reboot()">
   </main>
 
   <script src="/static/js/jquery-3.3.1.min.js"></script>
