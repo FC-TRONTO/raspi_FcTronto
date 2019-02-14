@@ -25,7 +25,7 @@ if __name__ == '__main__':
 
     p_imageProcessing = Process(target=imageProcessing.target, args=(shmem,))
 
-    file_list = glob.glob("./camera_distance/0degree/*jpg")
+    file_list = glob.glob("./camera_distance/0d/*jpg")
     TRACE(file_list)
 
     for file in file_list:
@@ -41,7 +41,7 @@ if __name__ == '__main__':
         cv2.moveWindow('MaskWall', 482, 502)
         cv2.waitKey(0)
 
-    p_imageProcessing.start()
+    # p_imageProcessing.start()
     TRACE('p_imageProcessing started')
 
     cv2.destroyAllWindows()
