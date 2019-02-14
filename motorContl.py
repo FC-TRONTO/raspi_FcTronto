@@ -118,7 +118,7 @@ class MotorController:
 
     # ゴール情報を使ってモータの値を計算する
     def calcMotorPowersByGoalAngle(self, eGoalAngle, mGoalAngle):
-        if self.DEBUG_SHOOT_ALGORITHM == 1:
+        if self.DEBUG_SHOOT_ALGORITHM == 0:
             # ゴールが正面にある場合
             if abs(eGoalAngle) < 10:
                 TRACE('calcMotor patern : enemyGoalAngle = 0')
@@ -149,7 +149,7 @@ class MotorController:
                     TRACE('calcMotor patern : cannot detect goal')
                     # どうしようもない時用の値を使う
                     return MotorController.SPEED_NOTHING_TO_DO
-        elif self.DEBUG_SHOOT_ALGORITHM == 2:
+        elif self.DEBUG_SHOOT_ALGORITHM == 1:
             # ゴールが正面にある場合
             # P制御
             if -180 < eGoalAngle < 180:
