@@ -1,3 +1,12 @@
+main {
+	line-height: 4;
+}
+
+.system {
+	position: absolute;
+	bottom: 0;
+}
+
 .python {
 	font-size: 20px;
 	display: inline-block;
