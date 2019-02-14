@@ -42,15 +42,21 @@ class MotorController:
     # 設定値->モータ値対応付け用辞書
     DIC_SETTING_TO_MOTOR_VALUE = {'STOP' : (0, 0)}
 
-    # 移動アルゴリズム2で使用
+    # 移動アルゴリズム1, 2で使用
     # シュート時の基準スピード
     SPEED_SHOOT = 45
-    # 比例項の係数
+    # シュート時の比例項の係数
     K_SHOOT_ANGLE = 0.25  # SPEED_SHOOT / 180にするとよい？
     # ボール追跡時の基準スピード
     SPEED_CHASE = 45
-    # 比例項の係数
+    # ボール追跡時の比例項の係数
     K_CHASE_ANGLE = 0.25  # SPEED_CHASE / 180にするとよい？
+
+    # 移動アルゴリズム2で使用
+    # フィールド中央復帰時の基準スピード
+    SPEED_GO_CENTER = 45
+    # フィールド中央復帰時の比例項の係数
+    K_GO_CENTER_ANGLE = 0.25  # SPEED_GO_CENTER / 180にするとよい？
 
     # コンストラクタ
     def __init__(self):
@@ -117,7 +123,7 @@ class MotorController:
             return num
 
     # ゴール情報を使ってモータの値を計算する
-    def calcMotorPowersByGoalAngle(self, eGoalAngle, mGoalAngle):
+    def calcMotorPowersByGoalAngle(self, eGoalAngle, mGoalAngle, fieldCenterAngle):
         if self.DEBUG_SHOOT_ALGORITHM == 0:
             # ゴールが正面にある場合
             if abs(eGoalAngle) < 10:
@@ -172,6 +178,28 @@ class MotorController:
                 # 自分のゴールとの角度も不正値の場合
                 else:
                     TRACE('calcMotor patern : cannot detect goal')
+                    # どうしようもない時用の値を使う
+                    return MotorController.SPEED_NOTHING_TO_DO
+        elif self.DEBUG_SHOOT_ALGORITHM == 2:
+            # ゴールが正面にある場合
+            # P制御
+            if -180 < eGoalAngle < 180:
+                TRACE('calcMotor patern : -180 < enemyGoalAngle < 180')
+                # ゴール角度が正面からずれるほどたくさん曲がる
+                return MotorController.SPEED_SHOOT - MotorController.K_SHOOT_ANGLE * eGoalAngle,\
+                       MotorController.SPEED_SHOOT + MotorController.K_SHOOT_ANGLE * eGoalAngle
+            # ゴールとの角度が不正値の場合
+            else:
+                # フィールド中央との角度を使う
+                # フィールド中央との角度が取れている場合
+                if -180 < fieldCenterAngle < 180:
+                    TRACE('calcMotor patern : -180 < fieldCenterAngle < 180')
+                    # ゴール角度が正面からずれるほどたくさん曲がる
+                    return MotorController.SPEED_GO_CENTER - MotorController.K_GO_CENTER_ANGLE * fieldCenterAngle, \
+                           MotorController.SPEED_GO_CENTER + MotorController.K_GO_CENTER_ANGLE * fieldCenterAngle
+                # 自分のゴールとの角度も不正値の場合
+                else:
+                    TRACE('calcMotor patern : cannot detect goal and center')
                     # どうしようもない時用の値を使う
                     return MotorController.SPEED_NOTHING_TO_DO
         else:
@@ -231,7 +259,7 @@ class MotorController:
         # ボール保持状態の場合
         if ballState == BallStateE.HAVE_BALL:
             # 画像処理結果を使ってゴールへ向かう
-            return self.calcMotorPowersByGoalAngle(shmem.enemyGoalAngle, shmem.myGoalAngle)
+            return self.calcMotorPowersByGoalAngle(shmem.enemyGoalAngle, shmem.myGoalAngle, shmem.fieldCenterAngle)
 
         # ボールなし状態の場合
         else:
@@ -283,7 +311,9 @@ class MotorController:
                  'IR=' + str(shmem.irAngle).rjust(4),
                  'touch=' + str(shmem.isTouched).rjust(4),
                  'enemy=' + str(shmem.enemyGoalAngle).rjust(4) + ',' + str(shmem.enemyGoalDis).rjust(4),
-                 'my=' + str(shmem.myGoalAngle).rjust(4) + ',' + str(shmem.myGoalDis).rjust(4))
+                 'my=' + str(shmem.myGoalAngle).rjust(4) + ',' + str(shmem.myGoalDis).rjust(4),
+                 'center=' + str(shmem.fieldCenterAngle).rjust(4) + ',' + str(shmem.fieldCenterDis).rjust(4),
+                 )
             time.sleep(0.1)
     
     # 起動処理
