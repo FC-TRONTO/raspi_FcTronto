@@ -14,8 +14,8 @@ class BallStateE(Enum):
 # モータ制御用クラス
 class MotorController:
     #移動アルゴリズム切り替え用変数
-    DEBUG_SHOOT_ALGORITHM = 0
-    DEBUG_CHASE_ALGORITHM = 0
+    DEBUG_SHOOT_ALGORITHM = 2
+    DEBUG_CHASE_ALGORITHM = 1
 
 
     # モータ制御用パラメータ群
@@ -44,13 +44,13 @@ class MotorController:
 
     # 移動アルゴリズム1, 2で使用
     # シュート時の基準スピード
-    SPEED_SHOOT = 45
+    SPEED_SHOOT = 55
     # シュート時の比例項の係数
-    K_SHOOT_ANGLE = 0.25  # SPEED_SHOOT / 180にするとよい？
+    K_SHOOT_ANGLE = 0.4  # SPEED_SHOOT / 180にするとよい？
     # ボール追跡時の基準スピード
-    SPEED_CHASE = 45
+    SPEED_CHASE = 55
     # ボール追跡時の比例項の係数
-    K_CHASE_ANGLE = 0.25  # SPEED_CHASE / 180にするとよい？
+    K_CHASE_ANGLE = 0.4  # SPEED_CHASE / 180にするとよい？
 
     # 移動アルゴリズム2で使用
     # フィールド中央復帰時の基準スピード
@@ -299,7 +299,7 @@ class MotorController:
             if setting != 'NONE':
                 motorPowers = MotorController.DIC_SETTING_TO_MOTOR_VALUE.get(setting)
             # 送信伝文生成
-            sendText = str(motorPowers[0]) + "," + str(motorPowers[1]) + "\n"
+            sendText = str(int(motorPowers[0])) + "," + str(int(motorPowers[1])) + "\n"
             # モータ値送信
             serial.write(sendText)
             # 0.05sごとに実行
