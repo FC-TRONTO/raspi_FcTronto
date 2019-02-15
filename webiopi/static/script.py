@@ -1,9 +1,11 @@
+# coding: UTF-8
+
 import webiopi
 import sys
 import os
 import subprocess
 from subprocess import Popen
-import ConfigParser
+import configparser
 
 PARAMETER_INI_PATH = '/home/pi/Desktop/raspi_FcTronto/webiopi/parameter.ini'
 PARAMETER_CUSTOM_SECTION = 'parameter'
@@ -43,6 +45,20 @@ def set_goal_mode(color):
         else:
             f.write('none')
 
+def update_config_file(key, data):
+    # ConfigParser を使って ini ファイルを編集
+    config = configparser.SafeConfigParser()
+    config.read(PARAMETER_INI_PATH, encoding='utf8')
+    
+    # parameter セクションを編集
+    if not config.has_section(PARAMETER_CUSTOM_SECTION):
+        config.add_section(PARAMETER_CUSTOM_SECTION)
+    
+    config.set(PARAMETER_CUSTOM_SECTION, str(key), str(data))
+
+    with open(PARAMETER_INI_PATH, 'w', encoding='utf8') as configfile:
+        config.write(configfile)
+
 @webiopi.macro
 def set_shoot_algo(num):
     update_config_file('shoot_algo', num)
@@ -75,16 +91,3 @@ def set_go_center(speed):
 def set_k_go_center(k):
     update_config_file('k_center_angle', k)
 
-def update_config_file(key, data):
-    # ConfigParser を使って ini ファイルを編集
-    config = ConfigParser.ConfigParser()
-    config.read(PARAMETER_INI_PATH)
-    
-    # parameter セクションを編集
-    if not config.has_section(PARAMETER_CUSTOM_SECTION):
-        config.add_section(PARAMETER_CUSTOM_SECTION)
-    
-    config.set(PARAMETER_CUSTOM_SECTION, key, data)
-
-    with open(PARAMETER_INI_PATH, 'w') as configfile:
-        config.write(configfile)

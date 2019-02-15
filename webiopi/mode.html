@@ -5,11 +5,11 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <title>index</title>
-
-	<script type="text/javascript" src="/webiopi.js"></script>
-	<script type="text/javascript" src="/static/js/main.js"></script>
+  
+  <script type="text/javascript" src="/webiopi.js"></script>
+  <script type="text/javascript" src="/static/js/main.js"></script>
   <link href="/static/css/bootstrap.min.css" rel="stylesheet">
-	<link rel="stylesheet" type="text/css" href="/static/css/style.css">
+  <link rel="stylesheet" type="text/css" href="/static/css/style.css">
 </head>
 
 <body>
@@ -26,17 +26,17 @@
 
   <main role="main" class="container">
     program : 
-    <input type="button" value="start" class="btn btn-secondary btn-sm" onClick="start()">
-		<input type="button" value="stop" class="btn btn-secondary btn-sm" onClick="stop()">
+    <input type="button" value="start" class="btn btn-secondary" onClick="start()">
+		<input type="button" value="stop" class="btn btn-secondary" onClick="stop()">
     <br>
     motor : 
-    <input type="button" value="stop" class="btn btn-secondary btn-sm" onClick="set_motor_setting('STOP')">
-	  <input type="button" value="stop end" class="btn btn-secondary btn-sm" onClick="set_motor_setting('NONE')">
+    <input type="button" value="stop" class="btn btn-secondary" onClick="set_motor_setting('STOP')">
+	  <input type="button" value="stop end" class="btn btn-secondary" onClick="set_motor_setting('NONE')">
     <br>
     goal mode : 
-    <input type="button" value="yellow" class="btn btn-secondary btn-sm" onClick="set_goal_mode('yellow')">
-    <input type="button" value="blue" class="btn btn-secondary btn-sm" onClick="set_goal_mode('blue')">
-	  <input type="button" value="REBOOT" class="btn btn-danger system btn-sm" onClick="reboot()">
+    <input type="button" value="yellow" class="btn btn-secondary" onClick="set_goal_mode('yellow')">
+    <input type="button" value="blue" class="btn btn-secondary" onClick="set_goal_mode('blue')">
+	  <input type="button" value="REBOOT" class="btn btn-danger system" onClick="reboot()">
   </main>
 
   <script src="/static/js/jquery-3.3.1.min.js"></script>
