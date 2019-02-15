@@ -4,7 +4,7 @@
 
 ## モータ制御パラメータ設定の説明
 - 現状以下の設定ファイルが存在する
-  - /webipoi/goal_mode.txt
+  - /webiopi/goal_mode.txt
   - /webiopi/motor_setting.txt
   - /webiopi/parameter.ini
 - それぞれのファイルに関する説明は以下の通り
