@@ -2,6 +2,39 @@
 - ラズパイ側プログラム
 - シリアル通信は画像処理・モータ制御部分とは別プロセスとして稼働させる想定
 
+## モータ制御パラメータ関係設定の説明
+- 現状以下の設定ファイルが存在する
+  - /webipoi/goal_mode.txt
+  - /webiopi/motor_setting.txt
+  - /webiopi/parameter.ini
+- それぞれのファイルに関する説明は以下の通り
+  - /webipoi/goal_mode.txt
+    - シュートするゴールの色の設定
+      - 現在は'yellow'または'blue'
+  - /webiopi/motor_setting.txt
+    - モータ値の特殊設定
+      - 現在はモータ停止設定のみ存在
+      - ファイルの中身が'STOP'の場合はモータ値を0, 0固定にする
+  - /webiopi/parameter.ini
+    - モータ値計算用のパラメータ設定
+      - 以下のパラメータを設定でき、それぞれ以下の変数に対応している
+
+        |パラメータ名|変数名|
+        |---|---|
+        |shoot_algo|DEBUG_SHOOT_ALGORITHM|
+        |chase_algo|DEBUG_CHASE_ALGORITHM|
+        |shoot_speed|SPEED_SHOOT|
+        |k_shoot_angle|K_SHOOT_ANGLE|
+        |chase_speed|SPEED_CHASE|
+        |k_chase_angle|K_CHASR_ANGLE|
+        |center_speed|SPEED_GO_CENTER|
+        |k_center_angle|K_GO_CENTER_ANGLE|
+    - configparserモジュールを使って書き込み読み込みをしている
+      - configparserについては下記公式ドキュメント参照
+        - https://docs.python.jp/3/library/configparser.html
+      - python2とpython3でモジュール名が異なることに注意
+        - python2 -> ConfigParser, python3 -> configparser
+
 ## シリアル通信部分の説明
 - 主にラズパイ側の視点から説明する
 ### マインドストーム→ラズパイ
