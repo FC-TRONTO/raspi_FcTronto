@@ -8,7 +8,7 @@
   - /webiopi/motor_setting.txt
   - /webiopi/parameter.ini
 - それぞれのファイルに関する説明は以下の通り
-  - /webipoi/goal_mode.txt
+  - /webiopi/goal_mode.txt
     - シュートするゴールの色の設定
       - 現在は'yellow'または'blue'
   - /webiopi/motor_setting.txt
