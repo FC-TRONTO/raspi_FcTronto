@@ -17,7 +17,7 @@
     <a class="navbar-brand" href="#">Webiopi</a>
     <ul class="navbar-nav mr-auto">
       <li class="nav-item active">
-        <a class="nav-link" href="/mode.html">SetMode</a>
+        <a class="nav-link" href="/index.html">TopPage</a>
       </li>
       <li class="nav-item active">
         <a class="nav-link" href="/parameter.html">SetParam</a>
@@ -25,13 +25,22 @@
   </nav>
 
   <main role="main" class="container">
-    <p>各設定は上のタブから行えます</p>
-    GitHub URL ->
-		<img src="/static/image/qr_github_url.png">
-    <input type="button" value="REBOOT" class="btn btn-danger system btn-sm" onClick="reboot()">
+    program : 
+    <input type="button" value="start" class="btn btn-secondary" onClick="start()">
+		<input type="button" value="stop" class="btn btn-secondary" onClick="stop()">
+    <br>
+    motor : 
+    <input type="button" value="stop" class="btn btn-secondary" onClick="set_motor_setting('STOP')">
+	  <input type="button" value="stop end" class="btn btn-secondary" onClick="set_motor_setting('NONE')">
+    <br>
+    goal mode : 
+    <input type="button" value="yellow" class="btn btn-secondary" onClick="set_goal_mode('yellow')">
+    <input type="button" value="blue" class="btn btn-secondary" onClick="set_goal_mode('blue')">
+	  <input type="button" value="REBOOT" class="btn btn-danger system" onClick="reboot()">
   </main>
 
   <script src="/static/js/jquery-3.3.1.min.js"></script>
   <script src="/static/js/bootstrap.bundle.min.js"></script>
+  </div>
 </body>
 </html>

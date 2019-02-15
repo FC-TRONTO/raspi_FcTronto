@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="jp">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>parameter</title>
+
+  <script type="text/javascript" src="/webiopi.js"></script>
+  <script type="text/javascript" src="/static/js/main.js"></script>
+  <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="/static/css/style.css">
+</head>
+
+<body>
+  <nav class="navbar navbar-expand navbar-dark bg-dark mb-2">
+    <a class="navbar-brand" href="#">Webiopi</a>
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link" href="/index.html">TopPage</a>
+      </li>
+      <li class="nav-item active">
+        <a class="nav-link" href="/mode.html">SetMode</a>
+      </li>
+  </nav>
+
+  <main role="main" class="container">
+    shoot algorithm pattern : 
+    <div class="btn-group btn-group-toggle" data-toggle="buttons">
+      <label class="btn btn-secondary">
+        <input type="button" value="0" class="btn btn-secondary btn-sm" onClick="set_shoot_algo(0)">
+      </label>
+      <label class="btn btn-secondary">
+        <input type="button" value="1" class="btn btn-secondary btn-sm" onClick="set_shoot_algo(1)">
+      </label>
+      <label class="btn btn-secondary">
+        <input type="button" value="2" class="btn btn-secondary btn-sm" onClick="set_shoot_algo(2)">
+      </label>
+    </div>
+    <br>
+    chase algorithm pattern : 
+    <div class="btn-group btn-group-toggle" data-toggle="buttons">
+      <label class="btn btn-secondary">
+        <input type="button" value="0" class="btn btn-secondary btn-sm" onClick="set_chase_algo(0)">
+      </label>
+      <label class="btn btn-secondary">
+        <input type="button" value="1" class="btn btn-secondary btn-sm" onClick="set_chase_algo(1)">
+      </label>
+    </div>
+    <br>
+    shoot speed : 
+    <div class="btn-group btn-group-toggle" data-toggle="buttons">
+      <label class="btn btn-secondary">
+        <input type="button" value="40" class="btn btn-secondary btn-sm" onClick="set_shoot_speed(40)">
+      </label>
+      <label class="btn btn-secondary">
+        <input type="button" value="50" class="btn btn-secondary btn-sm" onClick="set_shoot_speed(50)">
+      </label>
+      <label class="btn btn-secondary">
+        <input type="button" value="60" class="btn btn-secondary btn-sm" onClick="set_shoot_speed(60)">
+      </label>
+      <label class="btn btn-secondary">
+        <input type="button" value="70" class="btn btn-secondary btn-sm" onClick="set_shoot_speed(70)">
+      </label>
+    </div>
+    <br>
+    k shoot angle : 
+    <div class="btn-group btn-group-toggle" data-toggle="buttons">
+      <label class="btn btn-secondary">
+        <input type="button" value="0.3" class="btn btn-secondary btn-sm" onClick="set_k_shoot_angle(0.3)">
+      </label>
+      <label class="btn btn-secondary">
+        <input type="button" value="0.4" class="btn btn-secondary btn-sm" onClick="set_k_shoot_angle(0.4)">
+      </label>
+      <label class="btn btn-secondary">
+        <input type="button" value="0.5" class="btn btn-secondary btn-sm" onClick="set_k_shoot_angle(0.5)">
+      </label>
+      <label class="btn btn-secondary">
+        <input type="button" value="0.6" class="btn btn-secondary btn-sm" onClick="set_k_shoot_angle(0.6)">
+      </label>
+    </div>
+    <br>
+    chase speed : 
+    <div class="btn-group btn-group-toggle" data-toggle="buttons">
+      <label class="btn btn-secondary">
+        <input type="button" value="40" class="btn btn-secondary btn-sm" onClick="set_chase_speed(40)">
+      </label>
+      <label class="btn btn-secondary">
+        <input type="button" value="50" class="btn btn-secondary btn-sm" onClick="set_chase_speed(50)">
+      </label>
+      <label class="btn btn-secondary">
+        <input type="button" value="60" class="btn btn-secondary btn-sm" onClick="set_chase_speed(60)">
+      </label>
+      <label class="btn btn-secondary">
+        <input type="button" value="70" class="btn btn-secondary btn-sm" onClick="set_chase_speed(70)">
+      </label>
+    </div>
+    <br>
+    k chase angle : 
+    <div class="btn-group btn-group-toggle" data-toggle="buttons">
+      <label class="btn btn-secondary">
+        <input type="button" value="0.3" class="btn btn-secondary btn-sm" onClick="set_k_chase_angle(0.3)">
+      </label>
+      <label class="btn btn-secondary">
+        <input type="button" value="0.4" class="btn btn-secondary btn-sm" onClick="set_k_chase_angle(0.4)">
+      </label>
+      <label class="btn btn-secondary">
+        <input type="button" value="0.5" class="btn btn-secondary btn-sm" onClick="set_k_chase_angle(0.5)">
+      </label>
+      <label class="btn btn-secondary">
+        <input type="button" value="0.6" class="btn btn-secondary btn-sm" onClick="set_k_chase_angle(0.6)">
+      </label>
+    </div>
+    <br>
+    center speed : 
+    <div class="btn-group btn-group-toggle" data-toggle="buttons">
+      <label class="btn btn-secondary">
+        <input type="button" value="40" class="btn btn-secondary btn-sm" onClick="set_go_center(40)">
+      </label>
+      <label class="btn btn-secondary">
+        <input type="button" value="50" class="btn btn-secondary btn-sm" onClick="set_go_center(50)">
+      </label>
+      <label class="btn btn-secondary">
+        <input type="button" value="60" class="btn btn-secondary btn-sm" onClick="set_go_center(60)">
+      </label>
+      <label class="btn btn-secondary">
+        <input type="button" value="70" class="btn btn-secondary btn-sm" onClick="set_go_center(70)">
+      </label>
+    </div>
+    <br>
+    k center angle : 
+    <div class="btn-group btn-group-toggle" data-toggle="buttons">
+      <label class="btn btn-secondary">
+        <input type="button" value="0.3" class="btn btn-secondary btn-sm" onClick="set_k_go_center(0.3)">
+      </label>
+      <label class="btn btn-secondary">
+        <input type="button" value="0.4" class="btn btn-secondary btn-sm" onClick="set_k_go_center(0.4)">
+      </label>
+      <label class="btn btn-secondary">
+        <input type="button" value="0.5" class="btn btn-secondary btn-sm" onClick="set_k_go_center(0.5)">
+      </label>
+      <label class="btn btn-secondary">
+        <input type="button" value="0.6" class="btn btn-secondary btn-sm" onClick="set_k_go_center(0.6)">
+      </label>
+    </div>
+  </main>
+
+  <script src="/static/js/jquery-3.3.1.min.js"></script>
+  <script src="/static/js/bootstrap.bundle.min.js"></script>
+  </div>
+</body>
+</html>

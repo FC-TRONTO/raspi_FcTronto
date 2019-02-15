@@ -25,7 +25,7 @@ class ImageProcessing:
     DEBUG_IMSHOW = DISABLE
 
     BLUE_HSV_RANGE_MIN = [55, 70, 10]
-    BLUE_HSV_RANGE_MAX = [120, 150, 40]
+    BLUE_HSV_RANGE_MAX = [120, 150, 80]
     YELLOW_HSV_RANGE_MIN = [15, 127, 30]
     YELLOW_HSV_RANGE_MAX = [30, 255, 255]
     FIELD_HSV_RANGE_MIN = [42, 70, 20]
@@ -148,7 +148,8 @@ class ImageProcessing:
         mask = cv2.dilate(mask, kernel, iterations=1)
 
         # 画角の前後左右と画像表示の上下左右を揃えるために画像を転置する。
-        cv2.imshow('Mask' + color_name, mask.transpose((1, 0)))
+        if self.DEBUG_IMSHOW == self.ENABLE:
+            cv2.imshow('Mask' + color_name, mask.transpose((1, 0)))
         contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
         convex_hull_list = []
@@ -255,7 +256,7 @@ class ImageProcessing:
         with picamera.PiCamera() as camera:
             with picamera.array.PiRGBArray(camera) as stream:
                 camera.resolution = (480, 480)
-                cap = cv2.VideoCapture('test.avi')
+                cap = cv2.VideoCapture(0)
 
                 while cap.isOpened():
                     # 画像を取得し、stream.arrayにRGBの順で映像データを格納

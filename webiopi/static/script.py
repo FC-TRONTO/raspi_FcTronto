@@ -1,8 +1,14 @@
+# coding: UTF-8
+
 import webiopi
 import sys
 import os
 import subprocess
 from subprocess import Popen
+import configparser
+
+PARAMETER_INI_PATH = '/home/pi/Desktop/raspi_FcTronto/webiopi/parameter.ini'
+PARAMETER_CUSTOM_SECTION = 'parameter'
 
 @webiopi.macro
 def reboot(data):
@@ -38,4 +44,50 @@ def set_goal_mode(color):
             f.write('blue')
         else:
             f.write('none')
+
+def update_config_file(key, data):
+    # ConfigParser を使って ini ファイルを編集
+    config = configparser.SafeConfigParser()
+    config.read(PARAMETER_INI_PATH, encoding='utf8')
+    
+    # parameter セクションを編集
+    if not config.has_section(PARAMETER_CUSTOM_SECTION):
+        config.add_section(PARAMETER_CUSTOM_SECTION)
+    
+    config.set(PARAMETER_CUSTOM_SECTION, str(key), str(data))
+
+    with open(PARAMETER_INI_PATH, 'w', encoding='utf8') as configfile:
+        config.write(configfile)
+
+@webiopi.macro
+def set_shoot_algo(num):
+    update_config_file('shoot_algo', num)
+
+@webiopi.macro
+def set_chase_algo(num):
+    update_config_file('chase_algo', num)
+
+@webiopi.macro
+def set_shoot_speed(speed):
+    update_config_file('shoot_speed', speed)
+
+@webiopi.macro
+def set_k_shoot_angle(k):
+    update_config_file('k_shoot_angle', k)
+
+@webiopi.macro
+def set_chase_speed(speed):
+    update_config_file('chase_speed', speed)
+
+@webiopi.macro
+def set_k_chase_angle(k):
+    update_config_file('k_chase_angle', k)
+
+@webiopi.macro
+def set_go_center(speed):
+    update_config_file('center_speed', speed)
+
+@webiopi.macro
+def set_k_go_center(k):
+    update_config_file('k_center_angle', k)
 
