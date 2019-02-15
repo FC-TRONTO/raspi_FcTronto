@@ -5,6 +5,7 @@ import time
 from enum import Enum
 from debug import ERROR, WARN, INFO, DEBUG, TRACE
 import os
+import ConfigParser
 
 # ボール保持状態用列挙型
 class BallStateE(Enum):
@@ -58,6 +59,10 @@ class MotorController:
     # フィールド中央復帰時の比例項の係数
     K_GO_CENTER_ANGLE = 0.25  # SPEED_GO_CENTER / 180にするとよい？
 
+    # 設定ファイル情報
+    PARAMETER_INI_PATH = '/home/pi/Desktop/raspi_FcTronto/webiopi/parameter.ini'
+    PARAMETER_CUSTOM_SECTION = 'parameter'
+
     # コンストラクタ
     def __init__(self):
         DEBUG('MotorController generated')
@@ -66,7 +71,30 @@ class MotorController:
         self.is_dribble_started = False
         # モータ制御後処理インスタンス生成
         self.motorControlPostProcessor = MotorControlPostProcessor()
-    
+        # 設定値読み込み
+        self.getParameterSetting()
+
+    def getParameterSetting(self):
+        # パラメータ値設定ファイルを読み込み
+        config = ConfigParser.SafeConfigParser()
+        config.read(MotorController.PARAMETER_INI_PATH)
+
+        self.DEBUG_SHOOT_ALGORITHM = int(config.get(MotorController.PARAMETER_CUSTOM_SECTION, 'shoot_algo'))
+        self.DEBUG_CHASE_ALGORITHM = int(config.get(MotorController.PARAMETER_CUSTOM_SECTION, 'chase_algo'))
+        MotorController.SPEED_SHOOT = int(config.get(MotorController.PARAMETER_CUSTOM_SECTION, 'shoot_speed'))
+        MotorController.K_SHOOT_ANGLE = float(config.get(MotorController.PARAMETER_CUSTOM_SECTION, 'k_shoot_angle'))
+        MotorController.SPEED_CHASE = int(config.get(MotorController.PARAMETER_CUSTOM_SECTION, 'chase_speed'))
+        MotorController.K_CHASE_ANGLE = float(config.get(MotorController.PARAMETER_CUSTOM_SECTION, 'k_chase_angle'))
+        MotorController.SPEED_GO_CENTER = int(config.get(MotorController.PARAMETER_CUSTOM_SECTION, 'center_speed'))
+        MotorController.K_GO_CENTER_ANGLE = float(config.get(MotorController.PARAMETER_CUSTOM_SECTION, 'k_center_angle'))
+        INFO('------- motor control parameter read -------')
+        INFO('shoot_algo=' + str(self.DEBUG_SHOOT_ALGORITHM).rjust(3) + ',',
+                 'chase_algo=' + str(self.DEBUG_CHASE_ALGORITHM).rjust(3) + ',',
+                 'shoot=' + str(MotorController.SPEED_SHOOT).rjust(4) + ',' + str(MotorController.K_SHOOT_ANGLE).rjust(4) + ',',
+                 'chase=' + str(MotorController.K_CHASE_ANGLE).rjust(4) + ',' + str(MotorController.K_CHASE_ANGLE).rjust(4) + ',',
+                 'center=' + str(MotorController.SPEED_GO_CENTER).rjust(4) + ',' + str(MotorController.K_GO_CENTER_ANGLE).rjust(4)
+                 )
+
     # 距離センサの値から現在のボール状態を取得する
     def getBallStateByDistance(self, distance):
         # すでにドリブル状態に入っていた場合
