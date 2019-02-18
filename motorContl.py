@@ -149,6 +149,42 @@ class MotorController:
             return num / abs(num) * 100
         else:
             return num
+    
+    # 数値を100に丸めた際の差分を取得する
+    def calcDiffRondOffWithin100(self, num):
+        if abs(num) > 100:
+            return (num / abs(num) * 100) - num
+        else:
+            return 0
+    
+    # モータ値の絶対値を100に丸めつつ
+    # 丸められていない方を丸められた方の値に応じて修正する
+    def roundOffMotorSpeeds(self, motorSpeeds):
+        # モータ値それぞれについて絶対値を100に丸めた時の差分
+        diffPower = [0, 0]
+        diffPower[0] = self.calcDiffRondOffWithin100(motorSpeeds[0])
+        diffPower[1] = self.calcDiffRondOffWithin100(motorSpeeds[1])
+        DEBUG('diffPower =', diffPower[0], ', ', diffPower[1])
+
+        returnSpeeds = self.roundOffWithin100(motorSpeeds[0]), self.roundOffWithin100(motorSpeeds[1])
+        # 両モータ絶対値が100を超えている場合は100に丸めるのみ
+        if diffPower == [0, 0]:
+            TRACE('both power abs over 100')
+            return returnSpeeds
+        # 左モータ値のみ絶対値が100を超える
+        elif diffPower[0] != 0:
+            TRACE('left power abs over 100')
+            # 右モータ値のみ差分分だけ調整する
+            return returnSpeeds[0], returnSpeeds[1] + diffPower[0]
+        # 右モータ値のみ絶対値が100を超える
+        elif diffPower[1] != 0:
+            TRACE('right power abs over 100')
+            # 左モータ値のみ差分分だけ調整する
+            return returnSpeeds[0] + diffPower[1], returnSpeeds[1]
+        # どちらも絶対値がを100を超えない
+        else:
+            TRACE('both power abs under 100')
+            return returnSpeeds
 
     # ゴール情報を使ってモータの値を計算する
     def calcMotorPowersByGoalAngle(self, eGoalAngle, mGoalAngle, fieldCenterAngle):
@@ -164,7 +200,7 @@ class MotorController:
                 # モータの値は補正をかける
                 speed = eGoalAngle / MotorController.CORRECTION_VALUE_EGOAL_ANGLE_TO_SPEED
                 # 絶対値が100を超える場合は100に丸める
-                speed = self.roundOffWithin100(speed)
+                #speed = self.roundOffWithin100(speed)
                 return (-speed), speed
             # ゴールとの角度が不正値の場合
             else:
@@ -176,7 +212,7 @@ class MotorController:
                     # モータの値は補正をかける
                     speed = mGoalAngle / MotorController.CORRECTION_VALUE_MGOAL_ANGLE_TO_SPEED
                     # 絶対値が100を超える場合は100に丸める
-                    speed = self.roundOffWithin100(speed)
+                    #speed = self.roundOffWithin100(speed)
                     return speed, (-speed)
                 # 自分のゴールとの角度も不正値の場合
                 else:
@@ -201,7 +237,7 @@ class MotorController:
                     # モータの値は補正をかける
                     speed = mGoalAngle / MotorController.CORRECTION_VALUE_MGOAL_ANGLE_TO_SPEED
                     # 絶対値が100を超える場合は100に丸める
-                    speed = self.roundOffWithin100(speed)
+                    #speed = self.roundOffWithin100(speed)
                     return speed, (-speed)
                 # 自分のゴールとの角度も不正値の場合
                 else:
@@ -248,14 +284,14 @@ class MotorController:
                 # モータの値は補正をかける
                 speed = ballAngle / MotorController.CORRECTION_VALUE_BALL_ANGLE_TO_SPEED
                 # 絶対値が100を超える場合は100に丸める
-                speed = self.roundOffWithin100(speed)
+                #speed = self.roundOffWithin100(speed)
                 # debug
                 speed = speed / abs(speed) * 5
                 return (-speed), speed
         if self.DEBUG_CHASE_ALGORITHM == 1:
             # P制御
-            return self.roundOffWithin100(MotorController.SPEED_CHASE - MotorController.K_CHASE_ANGLE * ballAngle), \
-                   self.roundOffWithin100(MotorController.SPEED_CHASE + MotorController.K_CHASE_ANGLE * ballAngle)
+            return MotorController.SPEED_CHASE - MotorController.K_CHASE_ANGLE * ballAngle, \
+                   MotorController.SPEED_CHASE + MotorController.K_CHASE_ANGLE * ballAngle
 
     
     # ボールとの角度のみを使ってモータの値を計算する
@@ -272,12 +308,12 @@ class MotorController:
                 # モータの値は補正をかける
                 speed = ballAngle / MotorController.CORRECTION_VALUE_BALL_ANGLE_TO_SPEED
                 # 絶対値が100を超える場合は100に丸める
-                speed = self.roundOffWithin100(speed)
+                #speed = self.roundOffWithin100(speed)
                 return (-speed), speed
         elif self.DEBUG_CHASE_ALGORITHM == 1:
             # P制御
-            return self.roundOffWithin100(MotorController.SPEED_CHASE - MotorController.K_CHASE_ANGLE * ballAngle), \
-                   self.roundOffWithin100(MotorController.SPEED_CHASE + MotorController.K_CHASE_ANGLE * ballAngle)
+            return MotorController.SPEED_CHASE - MotorController.K_CHASE_ANGLE * ballAngle, \
+                   MotorController.SPEED_CHASE + MotorController.K_CHASE_ANGLE * ballAngle
         else:
             ERROR('Invalid Value : DEBUG_CHASE_ALGORITHM =', self.DEBUG_CHASE_ALGORITHM)
             return MotorController.SPEED_STOP
@@ -326,6 +362,8 @@ class MotorController:
             setting = self.getSetting()
             if setting != 'NONE':
                 motorPowers = MotorController.DIC_SETTING_TO_MOTOR_VALUE.get(setting)
+            # モータ値を正常値にまるめる
+            motorPowers = self.roundOffMotorSpeeds(motorPowers)
             # 送信伝文生成
             sendText = str(int(motorPowers[0])) + "," + str(int(motorPowers[1])) + "\n"
             # モータ値送信
