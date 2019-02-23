@@ -7,9 +7,9 @@
   - webサーバを起動し、webブラウザからの入力を処理する
 
 ## 必要部品
-- <a href="http://akizukidenshi.com/catalog/g/gM-11425/" target="_blank">RaspberryPi3 Model B</a>
-- <a href="http://akizukidenshi.com/catalog/g/gM-11425/" target="_blank">Raspberry Pi Camera Module V2</a>
-- <a href="http://akizukidenshi.com/catalog/g/gM-11425/]" target="_blank">3.5インチTFT LCD ディスプレイ</a>
+- <a href="http://akizukidenshi.com/catalog/g/gM-11425" target="_blank">RaspberryPi3 Model B</a>
+- <a href="https://www.amazon.co.jp/gp/product/B01ER2SKFS" target="_blank">Raspberry Pi Camera Module V2</a>
+- <a href="https://www.amazon.co.jp/gp/product/B01LXM8NL4" target="_blank">3.5インチTFT LCD ディスプレイ</a>
 - microSDカード(ラズパイOSインストール用)
 
 ## プログラム全体構成図
