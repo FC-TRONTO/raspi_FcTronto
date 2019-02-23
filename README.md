@@ -13,7 +13,8 @@
 - microSDカード(ラズパイOSインストール用)
 
 ## プログラム全体構成図
-データフローと処理フローがごちゃごちゃになっているが以下のような感じ  
+- データフローと処理フローがごちゃごちゃになっているが以下のような感じ
+    
 ![component.jpg](https://github.com/FC-TRONTO/raspi_FcTronto/blob/master/pic/component.jpg)
 
 ## モータ制御パラメータ設定の説明
