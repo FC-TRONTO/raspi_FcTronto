@@ -5,6 +5,7 @@
   - シリアル通信で取得した各センサの値および画像処理結果を用いてモータの値を計算
   - モータの値をシリアル通信で送信
   - webサーバを起動し、webブラウザからの入力を処理する
+- 各モジュールについてのメモ書きは[こちら](https://github.com/FC-TRONTO/raspi_FcTronto/wiki)に残してある
 
 ## 必要部品
 - <a href="http://akizukidenshi.com/catalog/g/gM-11425" target="_blank">RaspberryPi3 Model B</a>
